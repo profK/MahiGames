@@ -1,6 +1,15 @@
 ﻿import http = require('http');
 var port = process.env.port || 1337
-http.createServer(function (req, res) {
-    res.writeHead(200, { 'Content-Type': 'text/plain' });
-    res.end('Hello World\n');
+
+let fs = require('fs');
+fs.readFile('index.html', function (err, html) {
+    if (err) {
+        throw err;
+    }
+
+    http.createServer(function (req, response) {
+        response.writeHead(200, { "Content-Type": "text/html" });
+        response.write(html);
+        response.end();  
 }).listen(port);
+});
