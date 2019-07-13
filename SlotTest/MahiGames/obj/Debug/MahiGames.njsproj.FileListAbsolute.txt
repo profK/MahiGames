@@ -1,2 +1,5 @@
 C:\Users\jeffp\source\repos\SlotTest\MahiGames\obj\Debug\MahiGames.njsproj.CoreCompileInputs.cache
 C:\Users\jeffp\source\repos\SlotTest\MahiGames\bin\Microsoft.NodejsTools.WebRole.dll
+C:\Users\jeffp\wkspaces\MahiGames\SlotTest\MahiGames\obj\Debug\MahiGames.njsproj.CoreCompileInputs.cache
+C:\Users\jeffp\wkspaces\MahiGames\SlotTest\MahiGames\bin\Microsoft.NodejsTools.WebRole.dll
+C:\Users\jeffp\wkspaces\MahiGames\SlotTest\MahiGames\obj\Debug\MahiGames.njsprojAssemblyReference.cache

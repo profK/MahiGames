@@ -9,8 +9,10 @@ export default class Graphics2D
         }
         const canvas:HTMLCanvasElement = <HTMLCanvasElement>document.getElementById(divname);
         const ctx = canvas.getContext('2d');
-
-        ctx.fillRect(0,0 , 40, 60);
+        // paint the background black 
+        var clientHeight = canvas.clientHeight;
+        var clientWidth = canvas.clientWidth;
+        ctx.fillRect(0, 0, clientWidth, clientHeight);
     }
     
     public AddSprite (sprite: Sprite): void
