@@ -1,5 +1,16 @@
-﻿export default class Image
+﻿import Rect from "./Rect";
+
+export default class Image
 {
-    private Name: string;        
-    private Source: object;        
+    private name: string;    
+    private source: CanvasImageSource; 
+    private dimensions: Rect;
+
+    get Dimensions():Rect {
+        return this.dimensions;
+    }
+
+    get Source(): CanvasImageSource {
+        return this.source;
+    }
 }

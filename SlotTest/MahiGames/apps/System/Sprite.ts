@@ -1,8 +1,8 @@
-﻿
-export default class Sprite
+﻿import Graphics2D from "./Graphics2D";
+
+export default interface Sprite
 {
-    private AnimateSpeedMS: number;        
-    private Loop: boolean;        
-    private FrameCount: number;        
-    private CurrentFrame: number;        
+    Render(g2d:Graphics2D): void;
+    Update(msDelta: number):void;
+      
 }

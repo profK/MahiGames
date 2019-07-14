@@ -2,6 +2,11 @@
 
 
 export default class Matrix2D {
+    
+    Clone(): Matrix2D {
+        return new Matrix2D(this.values);
+    }
+
   private values: number[][];
 
   constructor(init?: number[][]) {
@@ -80,6 +85,11 @@ export default class Matrix2D {
         v2.Y = this.values[1].reduce((sum, v, k) => sum + (v * vec.values[k]), 0);
         v2.W = this.values[2].reduce((sum, v, k) => sum + (v * vec.values[k]), 0);
         return v2;
+    }
+
+    SetContextTransform(ctx: CanvasRenderingContext2D) {
+        let v = this.values; //convenience
+        ctx.setTransform(v[0][0], v[1][0], v[0][1], v[1][1], v[0][2], v[1][2]);
     }
 }
 

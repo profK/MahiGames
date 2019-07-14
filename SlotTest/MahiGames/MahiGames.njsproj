@@ -40,10 +40,12 @@
     <Content Include="tsconfig.json" />
     <Content Include="package.json" />
     <Content Include="README.md" />
+    <Content Include="utah_teapot.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="apps\" />
     <Folder Include="apps\System\" />
+    <Folder Include="apps\System\Sprites\" />
     <Folder Include="apps\System\tests\" />
   </ItemGroup>
   <ItemGroup>
@@ -54,15 +56,15 @@
     <TypeScriptCompile Include="apps\System\Mixer.ts" />
     <TypeScriptCompile Include="apps\System\Rect.ts" />
     <TypeScriptCompile Include="apps\System\Sprite.ts" />
+    <TypeScriptCompile Include="apps\System\Sprites\SimpleImageSprite.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="apps\System\tests\UnitTest1.ts">
       <SubType>Code</SubType>
       <TestFramework>ExportRunner</TestFramework>
     </TypeScriptCompile>
     <TypeScriptCompile Include="apps\System\Vector2.ts" />
     <TypeScriptCompile Include="system-lite.ts" />
-    <TypeScriptCompile Include="Start.ts">
-      <SubType>Code</SubType>
-    </TypeScriptCompile>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsToolsV2.targets" />
   <ProjectExtensions>
