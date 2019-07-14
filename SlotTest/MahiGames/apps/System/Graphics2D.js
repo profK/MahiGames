@@ -1,23 +1,37 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class Graphics2D {
+import Rect from "./Rect";
+export default class Graphics2D {
     constructor(divname) {
         if (divname == undefined) {
             divname = "canvas";
         }
-        const canvas = document.getElementById(divname);
-        const ctx = canvas.getContext('2d');
+        this.canvas = document.getElementById(divname);
+        this.ctx = this.canvas.getContext('2d');
         // paint the background black 
-        var clientHeight = canvas.clientHeight;
-        var clientWidth = canvas.clientWidth;
-        ctx.fillRect(0, 0, clientWidth, clientHeight);
+        this.Redraw(); // initisl frame
     }
     AddSprite(sprite) {
     }
     RemoveSprite(sprite) {
     }
+    SetBkgdColor(style) {
+        if (style == undefined) {
+            style = "blue";
+        }
+        this.ctx.fillstyle = style;
+    }
+    FillRect(rect) {
+        this.ctx.fillRect(rect.Position.X, rect.Position.Y, rect.Width, rect.Height);
+    }
+    Clear(bkgdColor) {
+        let clientHeight = this.canvas.clientHeight;
+        let clientWidth = this.canvas.clientWidth;
+        this.SetBkgdColor(bkgdColor);
+        this.FillRect(new Rect(0, 0, clientWidth, clientHeight));
+    }
+    Redraw(bkgdColor) {
+        this.Clear();
+    }
 }
-exports.default = Graphics2D;
 // stand alone web page test
 console.log("Making a G2D");
 new Graphics2D();

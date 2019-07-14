@@ -1,4 +1,5 @@
-﻿export default class Sprite
+﻿
+export default class Sprite
 {
     private AnimateSpeedMS: number;        
     private Loop: boolean;        

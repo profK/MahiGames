@@ -13,7 +13,8 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>9737e89e-573c-4e61-859d-a03a322c8ade</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>server.ts</StartupFile>
+    <StartupFile>
+    </StartupFile>
     <StartWebBrowser>True</StartWebBrowser>
     <SearchPath>
     </SearchPath>
@@ -32,10 +33,10 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="server.ts" />
     <Content Include="index.html">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="system-lite.js" />
     <Content Include="tsconfig.json" />
     <Content Include="package.json" />
     <Content Include="README.md" />
@@ -58,6 +59,10 @@
       <TestFramework>ExportRunner</TestFramework>
     </TypeScriptCompile>
     <TypeScriptCompile Include="apps\System\Vector2.ts" />
+    <TypeScriptCompile Include="system-lite.ts" />
+    <TypeScriptCompile Include="Start.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsToolsV2.targets" />
   <ProjectExtensions>

@@ -1,7 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const Vector2_1 = require("./Vector2");
-class Matrix2D {
+import Vector2 from "./Vector2";
+export default class Matrix2D {
     constructor(init) {
         if (init != undefined) {
             // this clones a 2D array
@@ -63,7 +61,7 @@ class Matrix2D {
         return new Matrix2D(result);
     }
     DotVec(vec) {
-        let v2 = new Vector2_1.default(1, 0);
+        let v2 = new Vector2(1, 0);
         // remeber that matrix access is [row][position], which means [y][x], and idexes are zero based
         v2.X = this.values[0].reduce((sum, v, k) => sum + (v * vec.values[k]), 0);
         v2.Y = this.values[1].reduce((sum, v, k) => sum + (v * vec.values[k]), 0);
@@ -71,5 +69,4 @@ class Matrix2D {
         return v2;
     }
 }
-exports.default = Matrix2D;
 //# sourceMappingURL=Matrix2D.js.map

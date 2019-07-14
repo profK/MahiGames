@@ -1,6 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class Vector2 {
+export default class Vector2 {
     constructor(x, y, w) {
         this.values = new Array(3);
         if (w == undefined) {
@@ -28,5 +26,4 @@ class Vector2 {
         return true;
     }
 }
-exports.default = Vector2;
 //# sourceMappingURL=Vector2.js.map

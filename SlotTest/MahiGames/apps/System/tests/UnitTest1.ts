@@ -1,4 +1,4 @@
-﻿import assert = require('assert');
+﻿import assert from "assert";
 import Matrix2D from "../Matrix2D";
 import Vector2 from "../Vector2"
 

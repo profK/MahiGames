@@ -1,6 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class Image {
+export default class Image {
 }
-exports.default = Image;
 //# sourceMappingURL=Image.js.map

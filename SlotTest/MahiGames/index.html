@@ -8,10 +8,15 @@
 </head>
 <body>
     <canvas id="canvas" width="800" height="600"></canvas>
-    basic web page 2 
+    basic web page 2
     <script>
         console.log("foo!");
     </script>
-    <script src="apps/System/Graphics2D.js" ></script>
+    <script src="system-lite.js"></script> <!-- system-lite support -->
+    <script src="application.js"></script> <!-- system lite buulds the app into one js file. Not ideal but necessary-->
+    <!--  start scrpt -->
+    <script>
+        System.require("apps/System/Graphics2D");
+    </script>
 </body>
 </html>
