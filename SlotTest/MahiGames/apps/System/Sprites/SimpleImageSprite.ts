@@ -12,9 +12,17 @@ export default class SimpleImageSprite implements Sprite {
         this.source = source;
     }
 
+    get Width(): number {
+        return <number>this.source.width;
+    }
+
+    get Height(): number {
+        return <number>this.source.height;
+    }
+
     Render(g2d: Graphics2D): void {
 
-        g2d.DrawImage(this.source, new Rect(0, 0, <number>this.source.width, <number>this.source.height),Transform);
+        g2d.DrawImage(this.source, new Rect(0, 0, <number>this.source.width, <number>this.source.height),this.Transform);
     }
 
     Update(msDelta: number):void {

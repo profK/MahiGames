@@ -225,23 +225,33 @@ System.register("apps/System/Matrix2D", ["apps/System/Vector2"], function (expor
         }
     };
 });
-System.register("apps/System/Sprites/SimpleImageSprite", ["apps/System/Rect"], function (exports_6, context_6) {
+System.register("apps/System/Sprites/SimpleImageSprite", ["apps/System/Rect", "apps/System/Matrix2D"], function (exports_6, context_6) {
     "use strict";
-    var Rect_1, SimpleImageSprite;
+    var Rect_1, Matrix2D_1, SimpleImageSprite;
     var __moduleName = context_6 && context_6.id;
     return {
         setters: [
             function (Rect_1_1) {
                 Rect_1 = Rect_1_1;
+            },
+            function (Matrix2D_1_1) {
+                Matrix2D_1 = Matrix2D_1_1;
             }
         ],
         execute: function () {
             SimpleImageSprite = class SimpleImageSprite {
                 constructor(source) {
+                    this.Transform = new Matrix2D_1.default();
                     this.source = source;
                 }
+                get Width() {
+                    return this.source.width;
+                }
+                get Height() {
+                    return this.source.height;
+                }
                 Render(g2d) {
-                    g2d.DrawImage(this.source, new Rect_1.default(0, 0, this.source.width, this.source.height));
+                    g2d.DrawImage(this.source, new Rect_1.default(0, 0, this.source.width, this.source.height), this.Transform);
                 }
                 Update(msDelta) {
                     //nop nothing time based
@@ -251,27 +261,30 @@ System.register("apps/System/Sprites/SimpleImageSprite", ["apps/System/Rect"], f
         }
     };
 });
-System.register("apps/System/Graphics2D", ["apps/System/Rect", "apps/System/Matrix2D", "apps/System/Sprites/SimpleImageSprite"], function (exports_7, context_7) {
+System.register("apps/System/Graphics2D", ["apps/System/Rect", "apps/System/Matrix2D", "apps/System/Sprites/SimpleImageSprite", "apps/System/Vector2"], function (exports_7, context_7) {
     "use strict";
-    var Rect_2, Matrix2D_1, SimpleImageSprite_1, Graphics2D, g2d, image;
+    var Rect_2, Matrix2D_2, SimpleImageSprite_1, Vector2_3, Graphics2D, g2d, image;
     var __moduleName = context_7 && context_7.id;
     return {
         setters: [
             function (Rect_2_1) {
                 Rect_2 = Rect_2_1;
             },
-            function (Matrix2D_1_1) {
-                Matrix2D_1 = Matrix2D_1_1;
+            function (Matrix2D_2_1) {
+                Matrix2D_2 = Matrix2D_2_1;
             },
             function (SimpleImageSprite_1_1) {
                 SimpleImageSprite_1 = SimpleImageSprite_1_1;
+            },
+            function (Vector2_3_1) {
+                Vector2_3 = Vector2_3_1;
             }
         ],
         execute: function () {
             Graphics2D = class Graphics2D {
                 constructor(divname) {
                     this.spriteList = new Array();
-                    this.worldXform = new Matrix2D_1.default(); // default is idnetity matrix
+                    this.worldXform = new Matrix2D_2.default(); // default is idnetity matrix
                     if (divname == undefined) {
                         divname = "canvas";
                     }
@@ -343,6 +356,10 @@ System.register("apps/System/Graphics2D", ["apps/System/Rect", "apps/System/Matr
             };
             image.onload = () => {
                 let sprite = new SimpleImageSprite_1.default(image);
+                let m = sprite.Transform.Translate(new Vector2_3.default(-sprite.Width / 2, -sprite.Height / 2));
+                m = m.Rotate(Math.PI / 4);
+                m = m.Translate(new Vector2_3.default(200, 200));
+                sprite.Transform = m;
                 g2d.AddSprite(sprite);
                 g2d.Redraw();
             };
@@ -388,32 +405,32 @@ System.register("apps/System/Mixer", [], function (exports_9, context_9) {
 });
 System.register("apps/System/tests/UnitTest1", ["assert", "apps/System/Matrix2D", "apps/System/Vector2"], function (exports_10, context_10) {
     "use strict";
-    var assert_1, Matrix2D_2, Vector2_3;
+    var assert_1, Matrix2D_3, Vector2_4;
     var __moduleName = context_10 && context_10.id;
     //Matrix2D tests
     function Matrix2DIdentityTest() {
-        let m2d = new Matrix2D_2.default();
+        let m2d = new Matrix2D_3.default();
         assert_1.default.equal(m2d.IsIdentity(), true, "Identity matrixx created and tested");
     }
     exports_10("Matrix2DIdentityTest", Matrix2DIdentityTest);
     function VecDotUnitTest() {
-        let m2d = new Matrix2D_2.default();
-        let v = new Vector2_3.default(1, 0);
+        let m2d = new Matrix2D_3.default();
+        let v = new Vector2_4.default(1, 0);
         assert_1.default.equal(m2d.DotVec(v).equals(v), true, "Testing dot vec with identity");
         // lets try a matrix rotation
         let rotm2 = m2d.Rotate(Math.PI / 2);
         let v2 = rotm2.DotVec(v);
-        let vtest = new Vector2_3.default(0, 1);
+        let vtest = new Vector2_4.default(0, 1);
         assert_1.default.equal(v2.equals(vtest), true, "testing 90 degree rotation");
-        let transm = new Matrix2D_2.default().Translate(new Vector2_3.default(2, 2));
+        let transm = new Matrix2D_3.default().Translate(new Vector2_4.default(2, 2));
         vtest = transm.DotVec(vtest);
-        assert_1.default.equal(vtest.equals(new Vector2_3.default(2, 3)), true, "Translate test");
-        transm = new Matrix2D_2.default().Scale(new Vector2_3.default(0.5, 1));
-        vtest = transm.DotVec(new Vector2_3.default(2, 2));
-        assert_1.default.equal(vtest.equals(new Vector2_3.default(1, 2)), true, "testing with scale as well");
-        transm = transm.Translate(new Vector2_3.default(3, -2));
-        vtest = transm.DotVec(new Vector2_3.default(2, 2));
-        assert_1.default.equal(vtest.equals(new Vector2_3.default(4, 0)), true, "testing with scale as well");
+        assert_1.default.equal(vtest.equals(new Vector2_4.default(2, 3)), true, "Translate test");
+        transm = new Matrix2D_3.default().Scale(new Vector2_4.default(0.5, 1));
+        vtest = transm.DotVec(new Vector2_4.default(2, 2));
+        assert_1.default.equal(vtest.equals(new Vector2_4.default(1, 2)), true, "testing with scale as well");
+        transm = transm.Translate(new Vector2_4.default(3, -2));
+        vtest = transm.DotVec(new Vector2_4.default(2, 2));
+        assert_1.default.equal(vtest.equals(new Vector2_4.default(4, 0)), true, "testing with scale as well");
     }
     exports_10("VecDotUnitTest", VecDotUnitTest);
     return {
@@ -421,11 +438,11 @@ System.register("apps/System/tests/UnitTest1", ["assert", "apps/System/Matrix2D"
             function (assert_1_1) {
                 assert_1 = assert_1_1;
             },
-            function (Matrix2D_2_1) {
-                Matrix2D_2 = Matrix2D_2_1;
+            function (Matrix2D_3_1) {
+                Matrix2D_3 = Matrix2D_3_1;
             },
-            function (Vector2_3_1) {
-                Vector2_3 = Vector2_3_1;
+            function (Vector2_4_1) {
+                Vector2_4 = Vector2_4_1;
             }
         ],
         execute: function () {

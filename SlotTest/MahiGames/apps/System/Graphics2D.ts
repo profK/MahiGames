@@ -105,8 +105,10 @@ image.onerror = () => {
 }
 image.onload = () => {
     let sprite: SimpleImageSprite = new SimpleImageSprite(image);
-    sprite.Transform.Translate(new Vector2(200, 200));
-    sprite.Transform.Rotate(Math.PI / 4);
+    let m: Matrix2D = sprite.Transform.Translate(new Vector2(-sprite.Width / 2, -sprite.Height / 2));
+    m = m.Rotate(Math.PI / 4);
+    m = m.Translate(new Vector2(200, 200));
+    sprite.Transform = m;
     g2d.AddSprite(sprite);
     g2d.Redraw();
 };
