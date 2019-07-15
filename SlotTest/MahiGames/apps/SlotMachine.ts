@@ -25,12 +25,18 @@ slot_image.onload = () => {
         console.log("Failed loading reel");
     }
     reel_image.onload = () => {
-        let reel:ScrollingImageSprite = new ScrollingImageSprite(reel_image,1,5);
+        let reel:ScrollingImageSprite = new ScrollingImageSprite(reel_image,1,5, true,
+            new Vector2(0,100));
         g2d.AddSprite(reel);
         reel.Transform = new Matrix2D().Translate(new Vector2(472, 298));
         g2d.Redraw();
+        //start redraw periodic
+        setInterval(()=> {
+            g2d.Redraw("blue");
+        },100);
     }
     reel_image.src="apps/assets/reel_cropped.png";
+
 
 };
 slot_image.src="apps/assets/slot.png"  // starts the load
