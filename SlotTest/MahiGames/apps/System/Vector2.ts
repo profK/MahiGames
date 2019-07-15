@@ -28,4 +28,12 @@
         }
         return true;
     }
+
+    TimesScalar(mult: number) {
+        return new Vector2(this.X*mult,this.Y*mult);
+    }
+
+    Add(other: Vector2) {
+        return new Vector2(this.X+other.X,this.Y+other.Y);
+    }
 }

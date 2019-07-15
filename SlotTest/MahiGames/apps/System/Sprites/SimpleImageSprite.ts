@@ -5,7 +5,7 @@ import Matrix2D from "../Matrix2D";
 
 
 export default class SimpleImageSprite implements Sprite {
-    private source: CanvasImageSource;
+    protected source: CanvasImageSource;
     public Transform: Matrix2D = new Matrix2D();
 
     constructor(source: CanvasImageSource) {
@@ -22,7 +22,7 @@ export default class SimpleImageSprite implements Sprite {
 
     Render(g2d: Graphics2D): void {
 
-        g2d.DrawImage(this.source, new Rect(0, 0, <number>this.source.width, <number>this.source.height),this.Transform);
+        g2d.DrawImage(this.source, this.Transform);
     }
 
     Update(msDelta: number):void {

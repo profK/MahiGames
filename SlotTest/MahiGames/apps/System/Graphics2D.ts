@@ -10,7 +10,19 @@ export default class Graphics2D
     private ctx:CanvasRenderingContext2D; 
     private canvas: HTMLCanvasElement;
     private spriteList: Sprite[] = new Array();
-    private worldXform: Matrix2D = new Matrix2D(); // default is idnetity matrix
+    private worldXform: Matrix2D = new Matrix2D();
+    private screenSize:Vector2;
+    private drawspaceSize:Vector2;
+
+    get PhysicalSize(): Vector2{
+        return this.screenSize;
+    }
+
+    get Size():Vector2{
+        return this.drawspaceSize;
+    }
+
+    // default is idnetity matrix
 
     constructor(divname?: string) {
         if (divname == undefined) {
@@ -18,10 +30,24 @@ export default class Graphics2D
         }
         this.canvas = <HTMLCanvasElement>document.getElementById(divname);
         this.ctx = this.canvas.getContext('2d');
-        // paint the background black 
-        this.Redraw(); // initisl frame
-       
+        // paint the background black
+        this.ResetCanvasSize(window.innerWidth,window.innerHeight);
+        this.screenSize = new Vector2(this.canvas.clientWidth,this.canvas.clientHeight);
+        this.Redraw(); // initial frame
 
+
+    }
+
+    public SetDrawspaceSize(size:Vector2):void {
+        this.drawspaceSize= size;
+        let scaleX = this.PhysicalSize.X/this.drawspaceSize.X;
+        let scaleY = this.PhysicalSize.Y/this.drawspaceSize.Y;
+        this.worldXform = new Matrix2D().Scale(new Vector2(scaleX,scaleY));
+    }
+
+    public ResetCanvasSize(width:number,height:number):void{
+        this.canvas.width = width;
+        this.canvas.height = height;
     }
     
     set WorldXform(xform:Matrix2D) {
@@ -60,23 +86,29 @@ export default class Graphics2D
     }
 
     public Clear(bkgdColor?: string) {
-        let clientHeight = this.canvas.clientHeight;
-        let clientWidth = this.canvas.clientWidth;
+
         this.SetBkgdColor(bkgdColor);
-        this.FillRect(new Rect(0, 0, clientWidth, clientHeight));
+        this.FillRect(new Rect(0, 0, this.PhysicalSize.X, this.PhysicalSize.Y));
     }
 
     
 
-    public DrawImage(image: CanvasImageSource, subRect: Rect, xform?: Matrix2D) {
+    public DrawImage(image: CanvasImageSource, xform?: Matrix2D,subRect?:Rect, destSize?:Vector2) {
         
         if (xform == undefined) {
             xform = this.worldXform; // dont use getter to avoid an unecessary copy
         } else {
             xform = xform.Dot(this.worldXform); // ditto
         }
+        if (subRect == undefined){
+            subRect = new Rect(0,0,<number>image.width,<number>image.height);
+        }
+        if (destSize == undefined){
+            destSize = new Vector2(subRect.Width,subRect.Height);
+        }
         xform.SetContextTransform(this.ctx);
-        this.ctx.drawImage(image, subRect.Position.X, subRect.Position.Y, subRect.Width, subRect.Height);
+        this.ctx.drawImage(image, subRect.Position.X, subRect.Position.Y, subRect.Width, subRect.Height,
+            0,0,destSize.X,destSize.Y);
     }
 
     private lastTime:Date;
@@ -95,24 +127,26 @@ export default class Graphics2D
    
 }
 
+function Teapottest():void {
 
     // stand alone web page test
     console.log("Making a G2D");
-let g2d = new Graphics2D();
-let image = new Image();
-image.onerror = () => {
-    console.log("Failed loading teapot");
+    let g2d = new Graphics2D();
+    let image = new Image();
+    image.onerror = () => {
+        console.log("Failed loading teapot");
+    }
+    image.onload = () => {
+        let sprite: SimpleImageSprite = new SimpleImageSprite(image);
+        let m: Matrix2D = sprite.Transform.Translate(new Vector2(-sprite.Width / 2, -sprite.Height / 2));
+        m = m.Rotate(Math.PI / 4);
+        m = m.Translate(new Vector2(200, 200));
+        sprite.Transform = m;
+        g2d.AddSprite(sprite);
+        g2d.Redraw();
+    };
+    image.src = "utah_teapot.png"
 }
-image.onload = () => {
-    let sprite: SimpleImageSprite = new SimpleImageSprite(image);
-    let m: Matrix2D = sprite.Transform.Translate(new Vector2(-sprite.Width / 2, -sprite.Height / 2));
-    m = m.Rotate(Math.PI / 4);
-    m = m.Translate(new Vector2(200, 200));
-    sprite.Transform = m;
-    g2d.AddSprite(sprite);
-    g2d.Redraw();
-};
-image.src="utah_teapot.png"
 
 
 
