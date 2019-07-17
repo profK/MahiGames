@@ -1,13 +1,16 @@
 // This is the main game file for the slot machine game
 
 
-import SimpleImageSprite from "./System/Sprites/SimpleImageSprite";
-import Matrix2D from "./System/Matrix2D";
-import Vector2 from "./System/Vector2";
-import Graphics2D from "./System/Graphics2D";
-import ScrollingImageSprite from "./System/Sprites/ScrollingImageSprite";
-import Sprite from "./System/Sprite";
-import SpinningSprite from "./System/Sprites/SpinningSprite";
+import SimpleImageSprite from "../apps/System/Sprites/SimpleImageSprite";
+import Matrix2D from "../apps/System/Matrix2D";
+import Vector2 from "../apps/System/Vector2";
+import Graphics2D from "../apps/System/Graphics2D";
+import ScrollingImageSprite from "../apps/System/Sprites/ScrollingImageSprite";
+import Sprite from "../apps/System/Sprite";
+import SpinningSprite from "../apps/System/Sprites/SpinningSprite";
+import AcceleratingSpinningSprite from "../apps/System/Sprites/AcceleratingSpinningSprite";
+import ExponentialMapper from "../apps/System/Sprites/ExponentialMapper";
+import ArcsinMapper from "../apps/System/Sprites/ArcsinMapper";
 
 // set up environemnt
 let g2d = new Graphics2D();
@@ -16,7 +19,7 @@ let screenSize:Vector2 = g2d.Size;
 
 
 // holders for the wheel and text sprites
-let wheel:SpinningSprite;
+let wheel:AcceleratingSpinningSprite;
 
 
 //load assets in parallel
@@ -58,7 +61,7 @@ function ImageLoadFailed(img):void
 
 
 LoadImage("apps/assets/wheel.png",(img)=>{
-    wheel = new SpinningSprite(img);
+    wheel = new AcceleratingSpinningSprite(img, new ArcsinMapper());
     drawList[0] = wheel;
     AssetLoaded();
 },ImageLoadFailed);
@@ -67,12 +70,17 @@ LoadImage("apps/assets/wheel.png",(img)=>{
 /// game logic starts here
 
 function StartGame():void{
-   ;
+
     let wheeldiameter:number = .5 * Math.min(screenSize.X,screenSize.Y);
     // transform wheel to center it and to make 80% of smaller dimension
     wheel.Transform = new Matrix2D().Translate(new Vector2(-wheel.Width/2,-wheel.Height/2)); // center
     wheel.Transform = wheel.Transform.Scale(new Vector2(wheeldiameter/wheel.Width,wheeldiameter/wheel.Height)); //scale
     wheel.Transform = wheel.Transform.Translate(new Vector2(g2d.Size.X/2,g2d.Size.Y/2));
+
+    // test rotation
+    //wheel.Speed= Math.PI/4;
+
+
 
     // start game engine
     //initial screen draw
@@ -80,6 +88,12 @@ function StartGame():void{
 
     // start animation
     setInterval(()=> g2d.Redraw());
+
+    Spin();
+}
+
+function Spin(){
+    wheel.AcclToRadsPerSec(Math.PI,3000);
 }
 
 
