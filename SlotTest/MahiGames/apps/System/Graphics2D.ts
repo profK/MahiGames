@@ -4,6 +4,11 @@ import Matrix2D from "./Matrix2D";
 import SimpleImageSprite from "./Sprites/SimpleImageSprite";
 import Vector2 from "./Vector2";
 
+// X and Y are the canvas relative coords of the click
+// a return of tue means to continue processing lcick on other sprites,
+// false means to consume the evnrt and stop further processing
+export type MouseEventHandler = (localPos: Vector2)=>boolean;
+
 export default class Graphics2D
 {
     
@@ -14,6 +19,7 @@ export default class Graphics2D
     private screenSize:Vector2;
     private drawspaceSize:Vector2;
 
+
     get PhysicalSize(): Vector2{
         return this.screenSize;
     }
@@ -21,6 +27,17 @@ export default class Graphics2D
     get Size():Vector2{
         return this.drawspaceSize;
     }
+
+    set WorldXform(xform:Matrix2D) {
+        this.worldXform = xform;
+    }
+
+    ///  this is a safe access that returns a copy.
+    get WorldXform() {
+        return this.worldXform.Clone();
+    }
+
+
 
     // default is idnetity matrix
 
@@ -30,11 +47,24 @@ export default class Graphics2D
         }
         this.canvas = <HTMLCanvasElement>document.getElementById(divname);
         this.ctx = this.canvas.getContext('2d');
-        // paint the background black
+        // set up the size relative to the actual device
         this.ResetCanvasSize(window.innerWidth,window.innerHeight);
         this.screenSize = new Vector2(this.canvas.clientWidth,this.canvas.clientHeight);
         this.Redraw(); // initial frame
-
+        // add in mouse click hook
+        var self=this;
+        this.canvas.addEventListener('mousedown',  (event) => {
+            let x = event.offsetX;
+            let y = event.offsetY;
+            let skip: boolean = false;
+            self.spriteList.forEach(sprite => {
+                let sssprite = <SimpleImageSprite>sprite;
+                if ((!skip)&&(sssprite.OnClick!=undefined)) {
+                    let worldRelativeClick = self.WorldXform.Invert().DotVec(new Vector2(x, y));
+                    skip = !sssprite.OnClick(worldRelativeClick); //eturns true if continuing, false if consumed
+                }
+            });
+        });
 
     }
 
@@ -50,14 +80,7 @@ export default class Graphics2D
         this.canvas.height = height;
     }
     
-    set WorldXform(xform:Matrix2D) {
-        this.worldXform = xform;
-    }
 
-    ///  this is a safe access that returns a copy.
-    get WorldXform() {
-        return this.worldXform.Clone();
-    }
 
     public AddSprite(sprite: Sprite): void
     {

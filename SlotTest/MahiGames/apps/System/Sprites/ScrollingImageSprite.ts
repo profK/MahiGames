@@ -8,6 +8,12 @@ export default class ScrollingImageSprite extends SimpleImageSprite {
 
     private loop:boolean=false;
     private pixPerSec:Vector2 = new Vector2(0,0);
+    private stopAt:number = -1; // -1 means don't stop
+    set PixPerSec(vec:Vector2){
+        this.pixPerSec = vec;
+        this.stopAt = -1;
+    }
+
     constructor(source: CanvasImageSource,widthInCells:number,heightInCells:number,loop?:boolean,
                 pixPerSec?:Vector2){
         super(source);
@@ -18,6 +24,7 @@ export default class ScrollingImageSprite extends SimpleImageSprite {
             this.pixPerSec = pixPerSec;
         }
         this.cellRect = new Rect(0,0,super.Width/widthInCells,super.Height/heightInCells)
+        this.pixPerSec = new Vector2(0,0);
     }
 
     Update(msDelta: number):void {
@@ -41,7 +48,22 @@ export default class ScrollingImageSprite extends SimpleImageSprite {
                 movePos.Y = super.Height - this.cellRect.Height
             }
         }
+        //check for stop, IMPORTANT: currently only does y, might need to be added to in the future
+        if (this.stopAt>-1){
+            let stopCellY:number = this.stopAt * this.cellRect.Height;
+            if ((stopCellY<=movePos.Y)&&(movePos.Y< (stopCellY+this.cellRect.Height))){
+                // stop on this cell
+                movePos.Y = this.cellRect.Height * this.stopAt;
+                this.PixPerSec = new Vector2(0,0);
+                this.stopAt=-1;
+
+            }
+        }
         this.cellRect.Position = movePos;
+    }
+
+    public StopAtYCell(cellNum:number){
+        this.stopAt = Math.trunc(cellNum);
     }
 
     Render(g2d: Graphics2D): void {

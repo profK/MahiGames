@@ -11,4 +11,10 @@ export default class Rect
         this.Width = width;
         this.Height = height;
     }
+
+    public Contains(vec:Vector2){
+        return (vec.X>=this.Position.X)&&(vec.X<=this.Position.X+this.Width)&&
+            (vec.Y>=this.Position.Y)&&(vec.Y<=this.Position.Y+this.Height);
+
+    }
 }
