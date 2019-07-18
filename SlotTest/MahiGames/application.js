@@ -1007,19 +1007,35 @@ System.register("apps/System/Sprites/AcceleratingSpinningSprite", ["apps/System/
         ],
         execute: function () {
             /**
-             * This class implements a sprite with a scrolling data window, it is used in SlotMachine to simulate
-             * spinning reels.
+             * This class implements a sprite that spins with an increasing/creasing rate set by a mapping class
+             * that maps 0:1 =>0:1 values.  It is used in WheelofFish
              * @class
-             * @TODO It currently is limited to only scrolling in Y, will need more work to support X
+             * @TTODO: Current only supports decreasing to 0 and increasing to a set max speed
              */
             AcceleratingSpinningSprite = class AcceleratingSpinningSprite extends SpinningSprite_1.default {
-                constructor(source, accelFunc) {
-                    super(source);
+                constructor() {
+                    super(...arguments);
+                    /**
+                     * The speed we are increasing or decreasing to over time
+                     */
                     this.targetSpeed = 0;
+                    /**
+                     * Time over which to interpolate reachign enw speed
+                     */
                     this.timeToReachMS = 0;
+                    /**
+                     * Internal tracker for how much time has passed since start of change
+                     */
                     this.timer = 0;
-                    this.mapper = accelFunc;
                 }
+                /**
+                 *  This method starts an acceleration or deceletation
+                 *  @TODO: currently any speed less then current speed is treated as a 0.  Shoudl be improved
+                 * @param spd the final speed to reach
+                 * @param timeToReachMS how long the accel/deccel will take
+                 * @param mappingFunc the function used to map the time to a more realistic non-linear curve
+                 * @method
+                 */
                 AcclToRadsPerSec(spd, timeToReachMS, mappingFunc) {
                     this.targetSpeed = spd;
                     this.timeToReachMS = timeToReachMS;
@@ -1027,6 +1043,11 @@ System.register("apps/System/Sprites/AcceleratingSpinningSprite", ["apps/System/
                     this.mapper = mappingFunc;
                     this.startingSpeed = this.Speed;
                 }
+                /**
+                 * This update function does the actual speed modficiation and Transform rotation
+                 * @param deltaMS numbre of MS since last called
+                 * @method
+                 */
                 // first cut only knows how to accelerate
                 Update(deltaMS) {
                     if (this.timer >= this.timeToReachMS) {
@@ -1280,12 +1301,12 @@ System.register("apps/WheelOfFish", ["apps/System/Sprites/SimpleImageSprite", "a
             textDisplay = new AutocenterTextSprite_1.default(g2d, "Wheel of Fish!");
             drawList[3] = textDisplay;
             LoadImage("apps/assets/colored_wheel.png", (img) => {
-                wheel = new AcceleratingSpinningSprite_1.default(img, new ArcsinMapper_1.default());
+                wheel = new AcceleratingSpinningSprite_1.default(img);
                 drawList[0] = wheel;
                 AssetLoaded();
             }, ImageLoadFailed);
             LoadImage("apps/assets/Arrow.png", (img) => {
-                arrow = new AcceleratingSpinningSprite_1.default(img, new ArcsinMapper_1.default());
+                arrow = new SimpleImageSprite_5.default(img);
                 drawList[1] = arrow;
                 AssetLoaded();
             }, ImageLoadFailed);

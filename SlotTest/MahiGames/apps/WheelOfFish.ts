@@ -83,13 +83,13 @@ textDisplay = new AutocenterTextSprite(g2d,"Wheel of Fish!");
 drawList[3] = textDisplay;
 
 LoadImage("apps/assets/colored_wheel.png",(img)=>{
-    wheel = new AcceleratingSpinningSprite(img, new ArcsinMapper());
+    wheel = new AcceleratingSpinningSprite(img);
     drawList[0] = wheel;
     AssetLoaded();
 },ImageLoadFailed);
 
 LoadImage("apps/assets/Arrow.png",(img)=>{
-    arrow = new AcceleratingSpinningSprite(img, new ArcsinMapper());
+    arrow = new SimpleImageSprite(img);
     drawList[1] = arrow;
     AssetLoaded();
 },ImageLoadFailed);
