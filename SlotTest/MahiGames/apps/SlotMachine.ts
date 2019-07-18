@@ -123,7 +123,7 @@ function StopReel(){
 
 function Spin(r1:number,r2:number,r3:number,r4:number){
     //set reels spinning
-    let vec:Vector2  = new Vector2(0,30);
+    let vec:Vector2  = new Vector2(0,1800);
     reelStopCount=4;
     setTimeout(()=>  {
         reel1.PixPerSec = vec;

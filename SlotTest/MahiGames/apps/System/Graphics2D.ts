@@ -65,6 +65,9 @@ export default class Graphics2D
                 }
             });
         });
+        // NOTE: this is temporary, eventually proper font support shouldbe added
+        this.ctx.font = 'bold 48px serif';
+        this.ctx.fillStyle = 'black';
 
     }
 
@@ -109,7 +112,7 @@ export default class Graphics2D
     }
 
     public Clear(bkgdColor?: string) {
-
+        this.ctx.resetTransform();
         this.SetBkgdColor(bkgdColor);
         this.FillRect(new Rect(0, 0, this.PhysicalSize.X, this.PhysicalSize.Y));
     }
@@ -134,17 +137,65 @@ export default class Graphics2D
             0,0,destSize.X,destSize.Y);
     }
 
-    private lastTime:Date;
-    public Redraw(bkgdColor?: string): void {
-        if (this.lastTime == undefined) { // first call
-            this.lastTime =new  Date();
-            return;
+    public DrawText(text:string, xform?:Matrix2D,center?:boolean){
+        if (xform == undefined) {
+            xform = this.worldXform; // dont use getter to avoid an unecessary copy
+        } else {
+            xform = xform.Dot(this.worldXform); // ditto
         }
-        let currentTime:Date = new Date();
-        let msDelta = currentTime.getMilliseconds();
-        this.Clear();
-        this.spriteList.forEach(a => a.Update(msDelta));
-        this.spriteList.forEach(a => a.Render(this));
+        if (center == undefined){
+            center=false;
+        }
+        this.ctx.resetTransform(); // becasue we apply the transform ourselves
+        this.ctx.fillStyle = 'black';
+        let pos:Vector2 = xform.DotVec(new Vector2(0,0)); // transform does not appear to move text, this is a hack
+        if (center){
+            this.ctx.textAlign = "center";
+        } else {
+            this.ctx.textAlign = "start";
+        }
+        this.ctx.fillText(text, pos.X, pos.Y);
+
+    }
+
+    public GetTextSize(text:string,xform?:Matrix2D):Vector2{
+        if (xform == undefined) {
+            xform = this.worldXform; // dont use getter to avoid an unecessary copy
+        } else {
+            xform = xform.Dot(this.worldXform); // ditto
+        }
+
+        var text_measures = this.ctx.measureText(text);
+        let pixelWidth:number = text_measures.width;
+
+        // this is a dirty hack based on some typography pseudo standards
+        let pixelHeight:number =this.ctx.measureText('M').width;
+        let transformed:Vector2 = xform.Invert().DotVec(new Vector2(pixelWidth,pixelHeight));
+        return transformed;
+    }
+
+    private lastTime:DOMHighResTimeStamp;
+
+    public Redraw(bkgdColor?: string): void {
+        var self = this;
+        window.requestAnimationFrame((currentTime:DOMHighResTimeStamp)=>{
+            if (self.lastTime == undefined) { // first call
+                self.lastTime =currentTime;
+                return;
+            }
+
+            let msDelta = currentTime - self.lastTime;
+            self.lastTime = currentTime;
+            self.Clear();
+            for( let i = 0;i<self.spriteList.length;i++) {
+                self.spriteList[i].Update(msDelta);
+            }
+            for( let i = 0;i<this.spriteList.length;i++)
+            {
+                self.spriteList[i].Render(this);
+            }
+        });
+
     }
 
    

@@ -36,4 +36,24 @@
     Add(other: Vector2) {
         return new Vector2(this.X+other.X,this.Y+other.Y);
     }
+
+    Sub(other: Vector2):Vector2 {
+        return new Vector2(this.X-other.X,this.Y-other.Y);
+    }
+
+    Minus(other: Vector2):Vector2 {
+        return new Vector2(this.X-other.X,this.Y-other.Y);
+    }
+
+    DivScalar(scalar:number):Vector2{
+        return new Vector2(this.X/scalar,this.Y/scalar);
+    }
+
+    Magnitude():number {
+        return Math.sqrt((this.X*this.X)+(this.Y*this.Y));
+    }
+
+    Normalized():Vector2{
+        return this.DivScalar(this.Magnitude());
+    }
 }

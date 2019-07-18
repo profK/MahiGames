@@ -71,6 +71,20 @@ export default class Matrix2D {
     ]));
   }
 
+  public GetRotation():number {
+    let centroid = this.DotVec(new Vector2(0,0));
+    // move xform abck to the origina
+    let rotOnly:Matrix2D = this.Translate(new Vector2(-centroid.X,-centroid.Y)) ;
+    let unitVec = rotOnly.DotVec(new Vector2(1,0));
+    unitVec = unitVec.Normalized(); // cancel out any scaling
+    // x is opp, y = adjacent tan=opp/adjacent
+    let rads = Math.atan2(unitVec.Y,unitVec.X);
+    if (rads<0) {  // cpnvrt to 0 to 2PI
+      rads = rads + (Math.PI*2);
+    }
+    return rads;
+  }
+
   public Dot(other: Matrix2D): Matrix2D {
     let result: number[][] = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
 
