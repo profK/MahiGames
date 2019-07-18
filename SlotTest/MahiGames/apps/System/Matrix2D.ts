@@ -1,14 +1,36 @@
 ﻿import Vector2 from "./Vector2";
 
 
+/**
+ * This class implements a 3x3 matrix as an array of row arrays
+ * It is implemented with an immutable interface.  All math calls return a new Matrix2D  object that
+ * contains the result
+ * It makes heavy use of map/reduce internally to encourage the host system to parallelize operations
+ *
+ * @class
+ */
 export default class Matrix2D {
 
+  /**
+   * This method returns a deep copy of the Matrix2D  object
+   * @method
+   */
   Clone(): Matrix2D {
     return new Matrix2D(this.values);
   }
 
+  /**
+   * This holds the internal array of rows
+   */
   private values: number[][];
 
+  /**
+   * This constructor creates a new Matrix2D from a passed in array of rows
+   * It deep copies the arrya such that changing the source arrya will not effect the
+   * Matrix2D value
+   * If no array is provided, it creates an identity matrix
+   * @param init the array of rows, default is the identity matrix
+   */
   constructor(init?: number[][]) {
 
     if (init != undefined) {
@@ -24,6 +46,11 @@ export default class Matrix2D {
 
   }
 
+
+  /**
+   * This tests a Matrix2D to see it if it the identity matrix
+   * @property
+   */
   public IsIdentity(): Boolean {
     for (let y = 0; y < this.values.length; y++) {
       for (let x = 0; x < this.values[y].length; x++) {
@@ -42,7 +69,12 @@ export default class Matrix2D {
     return true;
   }
 
-
+  /**
+   * returns a new Matrix2D object which represents this Matrix2D translated by the x and y in delta
+   * @param delta the x and y to translate by
+   * @returns a new Matrix2D object which represents this Matrix2D translated by the x and y in delta
+   * @method
+   */
   public Translate(delta: Vector2): Matrix2D {
     return this.Dot(new Matrix2D([
       [1, 0, delta.X],
@@ -51,6 +83,12 @@ export default class Matrix2D {
     ]));
   }
 
+  /**
+   * returns a new Matrix2D object which represents this Matrix2D rotated  by radians
+   * @param radians the clockwise rotatio to apply to this matrix to create a new one
+   * @returns a new Matrix2D object which represents this Matrix2D rotated  by radians
+   * @method
+   */
   public Rotate(radians: number): Matrix2D {
     return this.Dot(new Matrix2D([
       [Math.cos(radians), -Math.sin(radians), 0],
@@ -59,10 +97,22 @@ export default class Matrix2D {
     ]));
   }
 
+  /**
+   * This returns a new Matrix2D which is the inverse of this matrix
+   * @returns the inverse matrix of this one
+   * @method
+   */
   public Invert():Matrix2D {
     return new Matrix2D(matrix_invert(this.values));
   }
 
+
+  /**
+   * returns a new Matrix2D object which represents this Matrix2D scaled by mult
+   * @param mult the scale to apply to this matrix
+   * @returns a new Matrix2D object which represents this Matrix2D scaled by mult
+   * @method
+   */
   public Scale(mult: Vector2): Matrix2D {
     return this.Dot(new Matrix2D([
       [mult.X, 0, 0],
@@ -71,6 +121,12 @@ export default class Matrix2D {
     ]));
   }
 
+  /**
+   * This method extracts the rotation of this Matrix2D as clockwise radians
+   * Note that its rather expensive so its a godo candidate for caching where possible
+   * @returns the clockwise rotation of this Matrix2D in clockwise radians
+   * @method
+   */
   public GetRotation():number {
     let centroid = this.DotVec(new Vector2(0,0));
     // move xform abck to the origina
@@ -85,6 +141,13 @@ export default class Matrix2D {
     return rads;
   }
 
+  /**
+   * Pre-Multiplies this Matrix2D by another and returns thevalue as a nwe Matrix2D.  Note that
+   * pre-multiplication is what you want for concatenatign hirearchical transforms.
+   * @param other the other Matrix2D
+   * @returns   other * this as a new Matrix2D
+   * @method
+   */
   public Dot(other: Matrix2D): Matrix2D {
     let result: number[][] = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
 
@@ -96,6 +159,13 @@ export default class Matrix2D {
     return new Matrix2D(result);
   }
 
+  /**
+   * Dot  multiplies this matrix times a Vector2, transforming the Vector2 by this transform.
+   * Returns a new Vector2 containing the result
+   * @param vec the Vector2 to multiply by
+   * @returns vec * this as a new Vector2
+   * @method
+   */
   public DotVec(vec: Vector2): Vector2 {
     let v2: Vector2 = new Vector2(1, 0);
     // remeber that matrix access is [row][position], which means [y][x], and idexes are zero based
@@ -105,6 +175,12 @@ export default class Matrix2D {
     return v2;
   }
 
+  /**
+   * This is a Utility method that extracts the Matrix values from this Matrix2D and sets them as the
+   * current transform of the passed in CanvasRenderingContext
+   * @param ctx the context to set
+   * @method
+   */
   public SetContextTransform(ctx: CanvasRenderingContext2D) {
     let v = this.values; //convenience
     ctx.setTransform(v[0][0], v[1][0], v[0][1], v[1][1], v[0][2], v[1][2]);

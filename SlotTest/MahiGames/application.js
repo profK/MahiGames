@@ -50,15 +50,42 @@ var System;
         return result;
     }
 })(System || (System = {}));
+/**
+ * This is amath class that implents a 2D vector as an array of numbers.
+ * A TypeScript array format allows for the use of map/reduce when dot  multiplying by a Matrix2D
+ * This class does not yet implement all rasonable math functions, but only those needed right now
+ * by the Graphics2D engine
+ * It provides setters and getters to access the array elements as X,Y and W
+ *
+ */
 System.register("apps/System/Vector2", [], function (exports_1, context_1) {
     "use strict";
     var Vector2;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [],
-        execute: function () {
+        execute: function () {/**
+             * This is amath class that implents a 2D vector as an array of numbers.
+             * A TypeScript array format allows for the use of map/reduce when dot  multiplying by a Matrix2D
+             * This class does not yet implement all rasonable math functions, but only those needed right now
+             * by the Graphics2D engine
+             * It provides setters and getters to access the array elements as X,Y and W
+             *
+             */
             Vector2 = class Vector2 {
+                /**
+                 * This creates a new Vector2 with the passed in values
+                 * @param x the X value
+                 * @param y the Y value
+                 * @param w the W value, default is 1
+                 * @constructor
+                 */
                 constructor(x, y, w) {
+                    /**
+                     * Holds the values
+                     * @TODO: should really be made private with an acessor to make the interface  immutable
+                     * @property
+                     */
                     this.values = new Array(3);
                     if (w == undefined) {
                         w = 1;
@@ -67,12 +94,45 @@ System.register("apps/System/Vector2", [], function (exports_1, context_1) {
                     this.Y = y;
                     this.W = w;
                 }
+                /**
+                 * gets the X position of the array and retruns its value
+                 * @property
+                 */
                 get X() { return this.values[0]; }
+                /**
+                 * sets the X position of the array
+                 * @property
+                 */
                 set X(v) { this.values[0] = v; }
+                /**
+                 * gets the Y position of the array and retruns its value
+                 * @property
+                 */
                 get Y() { return this.values[1]; }
+                /**
+                 * sets the Y position of the array
+                 * @property
+                 */
                 set Y(v) { this.values[1] = v; }
+                /**
+                 * gets the W position of the array and retruns its value
+                 * @property
+                */
                 get W() { return this.values[2]; }
+                /**
+                 * sets the W position of the array
+                 * @property
+                 */
                 set W(v) { this.values[2] = v; }
+                /**
+                 * tests two vectors for euqality to the passed numebr of places
+                 * Note that the number of places is necessary to deal with rounding errors in the Javascript engine
+                 * Default number of places is 6 after the decimal
+                 * @param v2 the other Vector2 to comapre against
+                 * @param numplaces the number of places after the decimal to check
+                 * @returns true if equal, false if not
+                 * @method
+                 */
                 equals(v2, numplaces) {
                     if (numplaces == undefined) {
                         numplaces = 6; //round after 6 palces after the decimal
@@ -84,24 +144,55 @@ System.register("apps/System/Vector2", [], function (exports_1, context_1) {
                     }
                     return true;
                 }
+                /**
+                 * This multiples this Vector2 times a scalar and returns the result as a new Vector2
+                 * @param mult scalar to multiply by
+                 * @constructor
+                 * @returns the resulting Vector2
+                 */
                 TimesScalar(mult) {
                     return new Vector2(this.X * mult, this.Y * mult);
                 }
+                /**
+                 * This adds this Vector2 to another Vector2 and returns the result as a new Vector2
+                 * @param other
+                 * @returns the resulting Vector2
+                 * @method
+                 */
                 Add(other) {
                     return new Vector2(this.X + other.X, this.Y + other.Y);
                 }
-                Sub(other) {
-                    return new Vector2(this.X - other.X, this.Y - other.Y);
-                }
+                /**
+                 * This subtracts another Vector2 from this one and returns the result as a new Vector2
+                 * @param other
+                 * @returns the resulting Vector2
+                 * @method
+                 */
                 Minus(other) {
                     return new Vector2(this.X - other.X, this.Y - other.Y);
                 }
+                /**
+                 * This divides this Vector2 times a scalar and returns the result as a new Vector2
+                 * @param mult scalar to multiply by
+                 * @constructor
+                 * @returns the resulting Vector2
+                 */
                 DivScalar(scalar) {
                     return new Vector2(this.X / scalar, this.Y / scalar);
                 }
+                /**
+                 * This returns the length of this Vector2 as a scalar
+                 * @returns a number holding the resulting length
+                 * @method
+                 */
                 Magnitude() {
                     return Math.sqrt((this.X * this.X) + (this.Y * this.Y));
                 }
+                /**
+                 * This returns the normalized version of this Vector2 as a vector2
+                 * @returns a Vector2 holding the normalized vector
+                 * @method
+                 */
                 Normalized() {
                     return this.DivScalar(this.Magnitude());
                 }
@@ -121,12 +212,31 @@ System.register("apps/System/Rect", ["apps/System/Vector2"], function (exports_2
             }
         ],
         execute: function () {
+            /**
+             * This is a simple geometric class that defiens a rectangle by its top left corner, width and height.
+             * its is inclusive of  the boundaries
+             * It also provides a method to test a point for inclusion in the rectangle
+             * @class
+             */
             Rect = class Rect {
+                /**
+                 * This reates a new rectangle with the passed in parameters
+                 * @param x the left side of the rectangle
+                 * @param y the top of the rectangle
+                 * @param width the width of the rectangle
+                 * @param height the height of the rectangle
+                 */
                 constructor(x, y, width, height) {
                     this.Position = new Vector2_1.default(x, y);
                     this.Width = width;
                     this.Height = height;
                 }
+                /**
+                 * This tests a point passed a sa Vector2 for inclusion in the space defined  by the ractangle
+                 * @param vec the point to test as a Vector2
+                 * @returns true if the point is inside or on the boundaries of the rectangle, false if not
+                 * @method
+                 */
                 Contains(vec) {
                     return (vec.X >= this.Position.X) && (vec.X <= this.Position.X + this.Width) &&
                         (vec.Y >= this.Position.Y) && (vec.Y <= this.Position.Y + this.Height);
@@ -241,10 +351,29 @@ System.register("apps/System/Matrix2D", ["apps/System/Vector2"], function (expor
             }
         ],
         execute: function () {
+            /**
+             * This class implements a 3x3 matrix as an array of row arrays
+             * It is implemented with an immutable interface.  All math calls return a new Matrix2D  object that
+             * contains the result
+             * It makes heavy use of map/reduce internally to encourage the host system to parallelize operations
+             *
+             * @class
+             */
             Matrix2D = class Matrix2D {
+                /**
+                 * This method returns a deep copy of the Matrix2D  object
+                 * @method
+                 */
                 Clone() {
                     return new Matrix2D(this.values);
                 }
+                /**
+                 * This constructor creates a new Matrix2D from a passed in array of rows
+                 * It deep copies the arrya such that changing the source arrya will not effect the
+                 * Matrix2D value
+                 * If no array is provided, it creates an identity matrix
+                 * @param init the array of rows, default is the identity matrix
+                 */
                 constructor(init) {
                     if (init != undefined) {
                         // this clones a 2D array
@@ -258,6 +387,10 @@ System.register("apps/System/Matrix2D", ["apps/System/Vector2"], function (expor
                         this.values = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
                     }
                 }
+                /**
+                 * This tests a Matrix2D to see it if it the identity matrix
+                 * @property
+                 */
                 IsIdentity() {
                     for (let y = 0; y < this.values.length; y++) {
                         for (let x = 0; x < this.values[y].length; x++) {
@@ -275,6 +408,12 @@ System.register("apps/System/Matrix2D", ["apps/System/Vector2"], function (expor
                     }
                     return true;
                 }
+                /**
+                 * returns a new Matrix2D object which represents this Matrix2D translated by the x and y in delta
+                 * @param delta the x and y to translate by
+                 * @returns a new Matrix2D object which represents this Matrix2D translated by the x and y in delta
+                 * @method
+                 */
                 Translate(delta) {
                     return this.Dot(new Matrix2D([
                         [1, 0, delta.X],
@@ -282,6 +421,12 @@ System.register("apps/System/Matrix2D", ["apps/System/Vector2"], function (expor
                         [0, 0, 1]
                     ]));
                 }
+                /**
+                 * returns a new Matrix2D object which represents this Matrix2D rotated  by radians
+                 * @param radians the clockwise rotatio to apply to this matrix to create a new one
+                 * @returns a new Matrix2D object which represents this Matrix2D rotated  by radians
+                 * @method
+                 */
                 Rotate(radians) {
                     return this.Dot(new Matrix2D([
                         [Math.cos(radians), -Math.sin(radians), 0],
@@ -289,9 +434,20 @@ System.register("apps/System/Matrix2D", ["apps/System/Vector2"], function (expor
                         [0, 0, 1]
                     ]));
                 }
+                /**
+                 * This returns a new Matrix2D which is the inverse of this matrix
+                 * @returns the inverse matrix of this one
+                 * @method
+                 */
                 Invert() {
                     return new Matrix2D(matrix_invert(this.values));
                 }
+                /**
+                 * returns a new Matrix2D object which represents this Matrix2D scaled by mult
+                 * @param mult the scale to apply to this matrix
+                 * @returns a new Matrix2D object which represents this Matrix2D scaled by mult
+                 * @method
+                 */
                 Scale(mult) {
                     return this.Dot(new Matrix2D([
                         [mult.X, 0, 0],
@@ -299,6 +455,12 @@ System.register("apps/System/Matrix2D", ["apps/System/Vector2"], function (expor
                         [0, 0, 1]
                     ]));
                 }
+                /**
+                 * This method extracts the rotation of this Matrix2D as clockwise radians
+                 * Note that its rather expensive so its a godo candidate for caching where possible
+                 * @returns the clockwise rotation of this Matrix2D in clockwise radians
+                 * @method
+                 */
                 GetRotation() {
                     let centroid = this.DotVec(new Vector2_2.default(0, 0));
                     // move xform abck to the origina
@@ -312,6 +474,13 @@ System.register("apps/System/Matrix2D", ["apps/System/Vector2"], function (expor
                     }
                     return rads;
                 }
+                /**
+                 * Pre-Multiplies this Matrix2D by another and returns thevalue as a nwe Matrix2D.  Note that
+                 * pre-multiplication is what you want for concatenatign hirearchical transforms.
+                 * @param other the other Matrix2D
+                 * @returns   other * this as a new Matrix2D
+                 * @method
+                 */
                 Dot(other) {
                     let result = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
                     result = result.map((row, i) => {
@@ -321,6 +490,13 @@ System.register("apps/System/Matrix2D", ["apps/System/Vector2"], function (expor
                     });
                     return new Matrix2D(result);
                 }
+                /**
+                 * Dot  multiplies this matrix times a Vector2, transforming the Vector2 by this transform.
+                 * Returns a new Vector2 containing the result
+                 * @param vec the Vector2 to multiply by
+                 * @returns vec * this as a new Vector2
+                 * @method
+                 */
                 DotVec(vec) {
                     let v2 = new Vector2_2.default(1, 0);
                     // remeber that matrix access is [row][position], which means [y][x], and idexes are zero based
@@ -329,6 +505,12 @@ System.register("apps/System/Matrix2D", ["apps/System/Vector2"], function (expor
                     v2.W = this.values[2].reduce((sum, v, k) => sum + (v * vec.values[k]), 0);
                     return v2;
                 }
+                /**
+                 * This is a Utility method that extracts the Matrix values from this Matrix2D and sets them as the
+                 * current transform of the passed in CanvasRenderingContext
+                 * @param ctx the context to set
+                 * @method
+                 */
                 SetContextTransform(ctx) {
                     let v = this.values; //convenience
                     ctx.setTransform(v[0][0], v[1][0], v[0][1], v[1][1], v[0][2], v[1][2]);
@@ -1101,12 +1283,21 @@ System.register("apps/System/Sprites/SpinningSprite", ["apps/System/Sprites/Simp
         }
     };
 });
+/**
+ * This is a simple interface that defines an object with a Map function that maps a real input to a real output
+ * It is generally assumed that the input and output are both in the 0-1 inclusive range
+ * @interface
+ */
 System.register("apps/System/NumericalMapper", [], function (exports_10, context_10) {
     "use strict";
     var __moduleName = context_10 && context_10.id;
     return {
         setters: [],
-        execute: function () {
+        execute: function () {/**
+             * This is a simple interface that defines an object with a Map function that maps a real input to a real output
+             * It is generally assumed that the input and output are both in the 0-1 inclusive range
+             * @interface
+             */
         }
     };
 });
@@ -1514,65 +1705,16 @@ System.register("apps/WheelOfFish", ["apps/System/Sprites/SimpleImageSprite", "a
         }
     };
 });
-System.register("apps/System/AudioClip", [], function (exports_17, context_17) {
-    "use strict";
-    var AudioClip;
-    var __moduleName = context_17 && context_17.id;
-    return {
-        setters: [],
-        execute: function () {
-            AudioClip = class AudioClip {
-            };
-            exports_17("default", AudioClip);
-        }
-    };
-});
-System.register("apps/System/Image", [], function (exports_18, context_18) {
-    "use strict";
-    var Image;
-    var __moduleName = context_18 && context_18.id;
-    return {
-        setters: [],
-        execute: function () {
-            Image = class Image {
-                get Dimensions() {
-                    return this.dimensions;
-                }
-                get Source() {
-                    return this.source;
-                }
-            };
-            exports_18("default", Image);
-        }
-    };
-});
-System.register("apps/System/Mixer", [], function (exports_19, context_19) {
-    "use strict";
-    var Mixer;
-    var __moduleName = context_19 && context_19.id;
-    return {
-        setters: [],
-        execute: function () {
-            Mixer = class Mixer {
-                AddClip(clip) {
-                }
-                RemoveClip(clip) {
-                }
-            };
-            exports_19("default", Mixer);
-        }
-    };
-});
-System.register("apps/System/tests/UnitTest1", ["assert", "apps/System/Matrix2D", "apps/System/Vector2"], function (exports_20, context_20) {
+System.register("apps/System/tests/UnitTest1", ["assert", "apps/System/Matrix2D", "apps/System/Vector2"], function (exports_17, context_17) {
     "use strict";
     var assert_1, Matrix2D_6, Vector2_8;
-    var __moduleName = context_20 && context_20.id;
+    var __moduleName = context_17 && context_17.id;
     //Matrix2D tests
     function Matrix2DIdentityTest() {
         let m2d = new Matrix2D_6.default();
         assert_1.default.equal(m2d.IsIdentity(), true, "Identity matrixx created and tested");
     }
-    exports_20("Matrix2DIdentityTest", Matrix2DIdentityTest);
+    exports_17("Matrix2DIdentityTest", Matrix2DIdentityTest);
     function VecDotUnitTest() {
         let m2d = new Matrix2D_6.default();
         let v = new Vector2_8.default(1, 0);
@@ -1592,7 +1734,7 @@ System.register("apps/System/tests/UnitTest1", ["assert", "apps/System/Matrix2D"
         vtest = transm.DotVec(new Vector2_8.default(2, 2));
         assert_1.default.equal(vtest.equals(new Vector2_8.default(4, 0)), true, "testing with scale as well");
     }
-    exports_20("VecDotUnitTest", VecDotUnitTest);
+    exports_17("VecDotUnitTest", VecDotUnitTest);
     return {
         setters: [
             function (assert_1_1) {
