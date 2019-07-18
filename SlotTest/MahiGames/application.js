@@ -342,6 +342,10 @@ System.register("apps/System/Graphics2D", ["apps/System/Rect", "apps/System/Matr
     "use strict";
     var Rect_1, Matrix2D_1, SimpleImageSprite_1, Vector2_3, Graphics2D;
     var __moduleName = context_4 && context_4.id;
+    /**
+     * This was a little test of drawing an image with transforms used  in debugging
+     * @constructor
+     */
     function Teapottest() {
         // stand alone web page test
         console.log("Making a G2D");
@@ -382,9 +386,16 @@ System.register("apps/System/Graphics2D", ["apps/System/Rect", "apps/System/Matr
              * the low level rendering details.
              *
              * It also owns the update/render list which is called to draw a frame through the Render method
+             * @class
              */
             Graphics2D = class Graphics2D {
-                // default is idnetity matrix
+                /**
+                 * This creates a Graphics2D which is necessary for all drawing operations.
+                 * It retrieves the graphics context from an HTML5  canvas element named "canvas" by default but this can be
+                 * overidden
+                 * @param divname  the name of the canvas element to render to, defaults to "canvas"
+                 * @constructor
+                 */
                 constructor(divname) {
                     /**
                      * This is the update/draw list.  Sprites are invoked in their order in the list
@@ -424,6 +435,12 @@ System.register("apps/System/Graphics2D", ["apps/System/Rect", "apps/System/Matr
                     // NOTE: this is temporary, eventually proper font support shouldbe added
                     this.ctx.font = 'bold 48px serif';
                     this.ctx.fillStyle = 'black';
+                    var self = this;
+                    window.addEventListener('resize', () => {
+                        self.ResetCanvasSize(window.innerWidth, window.innerHeight);
+                        self.screenSize = new Vector2_3.default(this.canvas.clientWidth, this.canvas.clientHeight);
+                        self.SetDrawspaceSize(self.Size); // reset world transform
+                    });
                 }
                 /**
                  * Returns the size of the actual canvas as a Vector2 where X is the width and Y is the height
@@ -434,51 +451,114 @@ System.register("apps/System/Graphics2D", ["apps/System/Rect", "apps/System/Matr
                 }
                 /**
                  * Returns the size of the virtual drawspace as a Vector2 where X is the width and Y is the height
-                 * @constructor
+                 * @property
                  */
                 get Size() {
                     return this.drawspaceSize;
                 }
+                /***
+                 * This sets the world transform, also called a camera transform, that maps from virtual draw space to
+                 * canvas space
+                 * @param xform  a Matrix2D used to transform from virtual draw space to canvas space
+                 * @property
+                 */
                 set WorldXform(xform) {
                     this.worldXform = xform;
                 }
-                ///  this is a safe access that returns a copy.
+                /**
+                 * This returns a copy of the current world transform. Changing it will NOT change the
+                 * world transform unless it is set back with the setter
+                 * @property
+                 */
                 get WorldXform() {
                     return this.worldXform.Clone();
                 }
+                /**
+                 * This sets the virtual draw space size.  It re-writes the world transform as a scaling transform
+                 * from the given size to the actual canvas size
+                 * @param size a Vector2 where X is the width of the draw space, and Y is the height
+                 * @method
+                 */
                 SetDrawspaceSize(size) {
                     this.drawspaceSize = size;
                     let scaleX = this.PhysicalSize.X / this.drawspaceSize.X;
                     let scaleY = this.PhysicalSize.Y / this.drawspaceSize.Y;
                     this.worldXform = new Matrix2D_1.default().Scale(new Vector2_3.default(scaleX, scaleY));
                 }
+                /**
+                 * This is used to make the actual canvas element the size of the available browser window
+                 * @param width the width to set the canvas element to
+                 * @param height the height to set the canvas element to
+                 * @method
+                 */
                 ResetCanvasSize(width, height) {
                     this.canvas.width = width;
                     this.canvas.height = height;
                 }
+                /**
+                 * This adds a sprite to the list to be updated and drawn each frame
+                 * @param sprite An object that implements the Sprite interface
+                 * Note that a sprite that is added multiple tiems will get multiple Update and Redraw
+                 * calls every frame. (Which is probably not what you want.)
+                 * @method
+                 */
                 AddSprite(sprite) {
                     this.spriteList.push(sprite);
                 }
+                /**
+                 /**
+                 * This removes a sprite to the list to be updated and drawn each frame
+                 * It only removes the first encountered instance of a sprite in the draw list
+                 * @param sprite An object that implements the Sprite interface
+                 * @method
+                 */
                 RemoveSprite(sprite) {
                     let idx = this.spriteList.findIndex(a => a == sprite); //note == used because we DO want to compare references not values
                     if (idx >= 0) { // found a match
                         this.spriteList.splice(idx, 1);
                     }
                 }
+                /**
+                 *
+                 * This method sets the background color/style to use with following fills.
+                 * Valid values are any valid Canvas fill style.
+                 * @param style The style to use to fill the background, default is blue
+                 * @method
+                 */
                 SetBkgdColor(style) {
                     if (style == undefined) {
                         style = "blue";
                     }
                     this.ctx.fillStyle = style;
                 }
+                /**
+                 * This method draws a filled rectangle using the already set fill style
+                 * @param rect a Rect object that defiens the rectangle to fill (inclusive)
+                 * @method
+                 */
                 FillRect(rect) {
                     this.ctx.fillRect(rect.Position.X, rect.Position.Y, rect.Width, rect.Height);
                 }
+                /**
+                 * This method fills the canvas with a passed in background color, default is blue
+                 * @param bkgdColor  The color to fill the canvas with
+                 * @method
+                 */
                 Clear(bkgdColor) {
                     this.ctx.resetTransform();
                     this.SetBkgdColor(bkgdColor);
                     this.FillRect(new Rect_1.default(0, 0, this.PhysicalSize.X, this.PhysicalSize.Y));
                 }
+                /**
+                 * This method draws an image to the screen using the passed in Transformm, sub rectangle, and destination size
+                 * In genreal destination size should be left undefined and all scaling shoudl be done through the transform.
+                 * destSize just exists for very special corner cases.
+                 * @param image the source of pixel data
+                 * @param xform a transform to apply to the image's position, rotation, and size, defaults to the identity xform
+                 * @param subRect A portion of the image to draw, defaults to the entire image
+                 * @param destSize The size the image is to drawn in.  It dafaults to the size of the source sub rectangle
+                 * @method
+                 */
                 DrawImage(image, xform, subRect, destSize) {
                     if (xform == undefined) {
                         xform = this.worldXform; // dont use getter to avoid an unecessary copy
@@ -495,6 +575,17 @@ System.register("apps/System/Graphics2D", ["apps/System/Rect", "apps/System/Matr
                     xform.SetContextTransform(this.ctx);
                     this.ctx.drawImage(image, subRect.Position.X, subRect.Position.Y, subRect.Width, subRect.Height, 0, 0, destSize.X, destSize.Y);
                 }
+                /**
+                 * This method draws text using the current canvas context setitngs for font and fill
+                 * The passed in transform is used to position the text.  By defeault, the text is left justified at the
+                 * origin point.  If center is true, it is instead centered on the origin point
+                 * IMPORTANT: Due to apprent limitations in Canvas drawtest scalling and rotation are not supported
+                 * This routine should eventually be re-written to use sprite-based text graphics
+                 * @param text a string to render
+                 * @param xform the position transform, defaults to identity which makes text position 0,0
+                 * @param center if true then text is centered, if not or udnefined then text is left justified
+                 * @method
+                 */
                 DrawText(text, xform, center) {
                     if (xform == undefined) {
                         xform = this.worldXform; // dont use getter to avoid an unecessary copy
@@ -516,6 +607,15 @@ System.register("apps/System/Graphics2D", ["apps/System/Rect", "apps/System/Matr
                     }
                     this.ctx.fillText(text, pos.X, pos.Y);
                 }
+                /**
+                 * This method attempts to get the text size.  It currently returns the size in CSS pixels, whose mapping to
+                 * Canvas pixels is unclear at the moment.  Height also is estimated by the width of an M and seems reaosnably close.
+                 * @bug It is unclear how this value maps to drawspace right now
+                 * @param text the text to measure
+                 * @param xform the text transform, defaults to identity, not clear this is working
+                 * @method
+                 * @return a Vector2 where the X is text stirng width and Y is text string height
+                 */
                 GetTextSize(text, xform) {
                     if (xform == undefined) {
                         xform = this.worldXform; // dont use getter to avoid an unecessary copy
@@ -530,6 +630,13 @@ System.register("apps/System/Graphics2D", ["apps/System/Rect", "apps/System/Matr
                     let transformed = xform.Invert().DotVec(new Vector2_3.default(pixelWidth, pixelHeight));
                     return transformed;
                 }
+                /**
+                 * Calling this method updates all the sprites with the delta in ms since last update call.
+                 * It then requests that they draw themselves
+                 * All updates happen before renders.  The sprites are called in order of addition to the sprite list
+                 * @param bkgdColor
+                 * @method
+                 */
                 Redraw(bkgdColor) {
                     var self = this;
                     window.requestAnimationFrame((currentTime) => {
@@ -899,6 +1006,12 @@ System.register("apps/System/Sprites/AcceleratingSpinningSprite", ["apps/System/
             }
         ],
         execute: function () {
+            /**
+             * This class implements a sprite with a scrolling data window, it is used in SlotMachine to simulate
+             * spinning reels.
+             * @class
+             * @TODO It currently is limited to only scrolling in Y, will need more work to support X
+             */
             AcceleratingSpinningSprite = class AcceleratingSpinningSprite extends SpinningSprite_1.default {
                 constructor(source, accelFunc) {
                     super(source);

@@ -1,6 +1,12 @@
 import SpinningSprite from "./SpinningSprite";
 import NumericalMapper from "../NumericalMapper";
 
+/**
+ * This class implements a sprite with a scrolling data window, it is used in SlotMachine to simulate
+ * spinning reels.
+ * @class
+ * @TODO It currently is limited to only scrolling in Y, will need more work to support X
+ */
 export default class AcceleratingSpinningSprite extends SpinningSprite {
     private targetSpeed:number = 0;
     private timeToReachMS:number=0;
