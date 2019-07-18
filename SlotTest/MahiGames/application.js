@@ -1083,11 +1083,32 @@ System.register("apps/System/Sprites/ScrollingImageSprite", ["apps/System/Sprite
         }
     };
 });
-// This is the main game file for the slot machine game
+/**
+ * This is the main script for the slot machien game.
+ * It uses the Graphics2D system in the System folder for all its drawing.
+ *
+ * It automatically adjusts for window size.
+ *
+ * At the moment it uses a hacked async loading mechanism that has a very unlikely but possible race condition if all
+ * previous loads end before all loads are started.  This coudl be fixed with a proper async loading queue.  This
+ * was a compromsie for time.
+ *
+ * The slot machine also only uses about half the available screen width.  This comes from an early art error that
+ * would be fixable but relative positionings might have to be changed so I decided to live with it as a first cut
+ * rather then ship late.
+ *
+ * @TODO:  A button debounce  on spin would be a good idea before ship
+ *
+ *
+ */
 System.register("apps/SlotMachine", ["apps/System/Sprites/SimpleImageSprite", "apps/System/Matrix2D", "apps/System/Vector2", "apps/System/Graphics2D", "apps/System/Sprites/ScrollingImageSprite"], function (exports_8, context_8) {
     "use strict";
     var SimpleImageSprite_3, Matrix2D_3, Vector2_5, Graphics2D_1, ScrollingImageSprite_1, g2d, screenSize, reel1, reel2, reel3, reel4, loadCount, assetNum, drawList, reelStopCount, audio;
     var __moduleName = context_8 && context_8.id;
+    /**
+     * This callback method monitors loading and starst the game when all assets have bene loaded
+     * @method
+     */
     function AssetLoaded() {
         loadCount += 1;
         if (loadCount == assetNum) { // all assets loaded}
@@ -1095,6 +1116,13 @@ System.register("apps/SlotMachine", ["apps/System/Sprites/SimpleImageSprite", "a
             StartGame();
         }
     }
+    /**
+     * This is the function used to load all images
+     * @param path where to liad the image from
+     * @param success a callback for when the inage is loaded
+     * @param failure a callback if the load fails
+     * @method
+     */
     function LoadImage(path, success, failure) {
         assetNum += 1; // incr wait count
         let image = new Image();
@@ -1110,21 +1138,50 @@ System.register("apps/SlotMachine", ["apps/System/Sprites/SimpleImageSprite", "a
         };
         image.src = path;
     }
+    /**
+     * A failure nethod to let us knwo if an image didnt load, for debugging
+     * @param img
+     * @constructor
+     */
     function ImageLoadFailed(img) {
         console.log("Failed to load image at " + img.src);
     }
+    /**
+     * This is the function called when all images are loaded
+     * it does an initial screen rdraw and starts the game loop
+     * @methodthod
+     */
     function StartGame() {
         //initial screen draw
         g2d.Redraw();
         // start animation
         setInterval(() => g2d.Redraw());
     }
+    /**
+     * This function is called by each reel when it stops to keep track of when the have all stopped and
+     * end the audio.
+     *
+     * In the future it would also proceed to the win/lose state.  We know whether its a win or loss actually when we
+     * start since the stop points are set in the Spin method, but we would wait til now to tell the player ;)
+     * @method
+     */
     function StopReel() {
         reelStopCount -= 1;
         if (reelStopCount == 0) {
             audio.pause();
+            // TODO: go to win/loss
         }
     }
+    /***
+     * This is the logic of the game that spins the reels.  It uses features built into the ScrollingImageSprite
+     * to roll the reel and tell it where to stop visually.  It starst them at different times and sets them up to stop
+     * at random different times to proivde some visual interest
+     * @param r1 where the first reel will stop
+     * @param r2 where the second reel will stop
+     * @param r3 where the third reel will stop
+     * @param r4 where the fourth reel will stop
+     * @method
+     */
     function Spin(r1, r2, r3, r4) {
         //set reels spinning
         let vec = new Vector2_5.default(0, 1800);
@@ -1179,20 +1236,46 @@ System.register("apps/SlotMachine", ["apps/System/Sprites/SimpleImageSprite", "a
                 ScrollingImageSprite_1 = ScrollingImageSprite_1_1;
             }
         ],
-        execute: function () {// This is the main game file for the slot machine game
+        execute: function () {/**
+             * This is the main script for the slot machien game.
+             * It uses the Graphics2D system in the System folder for all its drawing.
+             *
+             * It automatically adjusts for window size.
+             *
+             * At the moment it uses a hacked async loading mechanism that has a very unlikely but possible race condition if all
+             * previous loads end before all loads are started.  This coudl be fixed with a proper async loading queue.  This
+             * was a compromsie for time.
+             *
+             * The slot machine also only uses about half the available screen width.  This comes from an early art error that
+             * would be fixable but relative positionings might have to be changed so I decided to live with it as a first cut
+             * rather then ship late.
+             *
+             * @TODO:  A button debounce  on spin would be a good idea before ship
+             *
+             *
+             */
             // set up environemnt
             g2d = new Graphics2D_1.default();
             g2d.SetDrawspaceSize(new Vector2_5.default(1920, 1080));
             screenSize = g2d.Size;
-            //load assets in parallel
+            //used to know when parallel loaded assetsare all in
             loadCount = 0;
             assetNum = 0;
+            /**
+             * This is used to assign the assets to a draw order.  the Graphics2D engine assumes that
+             * draw order is the order in which they are added to its list.
+             * This holds them in the right order until they are all loaded and cna be transferred
+             * to Graphics2D
+             */
             drawList = Array(6); // used to assemble in right draw order
+            // start loading the game images here
             LoadImage("apps/assets/slot.png", (img) => {
                 let slot = new SimpleImageSprite_3.default(img);
                 drawList[0] = slot;
                 AssetLoaded();
             }, ImageLoadFailed);
+            // Note that we are going to use the same  image data for 4 independant reel sprites to save time
+            // and memory
             LoadImage("apps/assets/reel_cropped.png", (img) => {
                 reel1 = new ScrollingImageSprite_1.default(img, 1, 5, true, new Vector2_5.default(0, 100));
                 drawList[1] = reel1;
@@ -1208,6 +1291,7 @@ System.register("apps/SlotMachine", ["apps/System/Sprites/SimpleImageSprite", "a
                 reel4.Transform = new Matrix2D_3.default().Translate(new Vector2_5.default(914, 298));
                 AssetLoaded();
             }, ImageLoadFailed);
+            // This loads the spin button and sets up a callback on click
             LoadImage("apps/assets/spin_button.png", (img) => {
                 let spin = new SimpleImageSprite_3.default(img);
                 spin.Transform = new Matrix2D_3.default().Translate(new Vector2_5.default(475, 600));
@@ -1219,6 +1303,11 @@ System.register("apps/SlotMachine", ["apps/System/Sprites/SimpleImageSprite", "a
                 drawList[5] = spin;
                 AssetLoaded();
             });
+            // This next section has to do with the spinning state.  It starts the reels spinning
+            // and plays a ratchet noise
+            /**
+             * This is used to count down the asynchronously stopped reels so we know when we are done
+             */
             reelStopCount = 4;
         }
     };
