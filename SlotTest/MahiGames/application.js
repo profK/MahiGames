@@ -683,29 +683,74 @@ System.register("apps/System/Sprites/SimpleImageSprite", ["apps/System/Rect", "a
             }
         ],
         execute: function () {
+            /**
+             * A basic image drawing sprite. It is a super-class for a number fo fancier sprites.
+             * It has a bitmap source, basic dimensions, a Transform, and a click CB
+             * @class
+             */
             SimpleImageSprite = class SimpleImageSprite {
+                /**
+                 * This creates a SimpleImageSprite from an HTML5 CanvasImageSource
+                 * @param source the CanvasImageSource providing the bitmap
+                 * @constructor
+                 */
                 constructor(source) {
+                    /**
+                     * A Transformation matrix to apply when drawing the bitmap
+                     */
                     this.Transform = new Matrix2D_2.default();
                     this.source = source;
                 }
+                /**
+                 * The width of the sprite's bounding rectangle
+                 * @property
+                 */
                 get Width() {
                     return this.source.width;
                 }
+                /**
+                 * The height of the sprite's bounding rectangle
+                 * @property
+                 */
                 get Height() {
                     return this.source.height;
                 }
+                /**
+                 * The user provided callback on mosue click, or undefined if not set
+                 * @property
+                 */
                 get OnClckCB() {
                     return this.onClickCB;
                 }
+                /**
+                 * Sets the user provided callback on mouse click
+                 * @property
+                 */
                 set OnClickCB(cb) {
                     this.onClickCB = cb;
                 }
+                /**
+                 * Called by the Gaphics2D to render the image
+                 * @param g2d the G2D to use to render
+                 * @method
+                 */
                 Render(g2d) {
                     g2d.DrawImage(this.source, this.Transform);
                 }
+                /***
+                 * A null update because a SimpleImageSprite has no behavior other then rendering
+                 * @param msDelta
+                 * @method
+                 */
                 Update(msDelta) {
                     //nop nothing time based
                 }
+                /**
+                 * A callback on mouse click that checks to se eif the click is in the sprite's boundng
+                 * rectangle.  if so it calls the user defined callback if defined.
+                 * @param worldPos where in drawspace the click ocurred
+                 * @method
+                 */
                 OnClick(worldPos) {
                     console.log("got click event");
                     if (this.onClickCB == undefined) {
@@ -745,11 +790,37 @@ System.register("apps/System/Sprites/ScrollingImageSprite", ["apps/System/Sprite
             }
         ],
         execute: function () {
+            /**
+             * This class implements a sprite that displays a scrolling window from the total image
+             * It is used to simulate slot reels in SlotMachine
+             * @class
+             *
+             * @TODO: currently only supports Y scrolling, X shoudl be implemnted eventually
+             */
             ScrollingImageSprite = class ScrollingImageSprite extends SimpleImageSprite_2.default {
+                /**
+                 * A constructor that makes a ScrollingImageSprite
+                 * @param source the CanvasImageSource to use for bitmap data
+                 * @param widthInCells the number of cells wide the image is, source width in pixels should divide evenly by this number
+                 * @param heightInCells the number of cells high the image is, source height in pixels should divide evenly by this number
+                 * @param loop if true then this is a looping scroll, undefined means false
+                 * @param pixPerSec the nubmer of pixels the image should move at as a vector2. currently only Y is supported, default is 0
+                 * @see PixPerSec
+                 */
                 constructor(source, widthInCells, heightInCells, loop, pixPerSec) {
                     super(source);
+                    /**
+                     * If true then the scrolling loops.  This functionality assumes that the start and end of the loop are
+                     * the same in order to create a smoothly repeating scrolling view.
+                     */
                     this.loop = false;
+                    /**
+                     * Speed to scroll the window at.  currentyl only  Y is used.
+                     */
                     this.pixPerSec = new Vector2_4.default(0, 0);
+                    /**
+                     * A multiple of the cell size to stop at.  The loo pends when y = stopAt*cellRect.Height
+                     */
                     this.stopAt = -1; // -1 means don't stop
                     if (loop != undefined) {
                         this.loop = loop;
@@ -760,10 +831,21 @@ System.register("apps/System/Sprites/ScrollingImageSprite", ["apps/System/Sprite
                     this.cellRect = new Rect_3.default(0, 0, super.Width / widthInCells, super.Height / heightInCells);
                     this.pixPerSec = new Vector2_4.default(0, 0);
                 }
+                /**
+                 * Sets the scroll rate.  If non-zero then scrolling starts immediately
+                 * @TODO:  Currently only Y is supported, X should be added in the future
+                 * @param vec A Vector2 representing the pixels per second in X and y to scroll
+                 * @property
+                 */
                 set PixPerSec(vec) {
                     this.pixPerSec = vec;
                     this.stopAt = -1;
                 }
+                /**
+                 * This calculates the position of the new sub-rect based on PixPerSec and msDelta
+                 * @param msDelta elapsed milliseconds snce last call
+                 * @method
+                 */
                 Update(msDelta) {
                     let moveVec = this.pixPerSec.TimesScalar(msDelta / 1000);
                     let movePos = this.cellRect.Position.Add(moveVec);
@@ -797,9 +879,20 @@ System.register("apps/System/Sprites/ScrollingImageSprite", ["apps/System/Sprite
                     }
                     this.cellRect.Position = movePos;
                 }
+                /**
+                 * This sets the stopAt number, a loopign scroll cell to stop at.  The loop ends when y = stopAt*cellRect.Height
+                 * @param cellNum the ordinal Y number of the cell to stop scrolling at
+                 * @method
+                 * @TODO: Only supports Y, should look at X as well in the future
+                 */
                 StopAtYCell(cellNum) {
                     this.stopAt = Math.trunc(cellNum);
                 }
+                /**
+                 * Called by the Gaphics2D to render the image
+                 * @param g2d the G2D to use to render
+                 * @method
+                 */
                 Render(g2d) {
                     g2d.DrawImage(this.source, this.Transform, this.cellRect);
                 }
@@ -962,17 +1055,39 @@ System.register("apps/System/Sprites/SpinningSprite", ["apps/System/Sprites/Simp
             }
         ],
         execute: function () {
+            /**
+             * A child of SimpleImageSprite that implements a self-rotating image
+             * @class
+             */
             SpinningSprite = class SpinningSprite extends SimpleImageSprite_4.default {
-                constructor(source) {
-                    super(source);
+                constructor() {
+                    super(...arguments);
+                    /**
+                     * Speed to rotate in clockwise radians per second
+                     */
                     this.rotationSpeed = 0;
                 }
+                /**
+                * S
+                 * Gets the  speed to rotate in clockwise radians per second
+                 * @property
+                */
                 get Speed() {
                     return this.rotationSpeed;
                 }
+                /**
+                 * Sets the  speed to rotate in clockwise radians per second
+                 * @property
+                 */
                 set Speed(radsPerSec) {
                     this.rotationSpeed = radsPerSec;
                 }
+                /**
+                 * Rotates the sprite by applying a rotation to its Transform based
+                 * on rotationSpeed and the elapsed time in ms
+                 * @param msDelta elasped time in MS
+                 * @method
+                 */
                 Update(msDelta) {
                     super.Update(msDelta);
                     let center = this.Transform.DotVec(new Vector2_6.default(this.Width / 2, this.Height / 2));
@@ -1153,8 +1268,24 @@ System.register("apps/System/Sprites/TextSprite", ["apps/System/Matrix2D"], func
             }
         ],
         execute: function () {
+            /**
+             * This is a sprite that draws left justified text at its origin.
+             * @TODO: This is VERY preliminary and has a  number of limitations
+             * @TODO:  Needs individually settbale font parameters
+             * @TODO:  Currently  only uses position of Transform, doesnt play very will with the rest of the system
+             * @TODO: Supporting code in Graphics2D probably needs a complete re-write to use sprite glyphs rather then
+             * @TODO: canvas text
+             */
             TextSprite = class TextSprite {
+                /**
+                 * This creates a TextSprite that renders the passed in string
+                 * @param g2d the Graphics2D that will be used to render the TextSprite
+                 * @param text an initialtext to render, may be reset with Text =
+                 */
                 constructor(g2d, text) {
+                    /**
+                     * Transform to transform the text. Currently only Translation is supported in Graphics2D
+                     */
                     this.Transform = new Matrix2D_4.default();
                     this.g2d = g2d;
                     if (text == undefined) {
@@ -1162,23 +1293,51 @@ System.register("apps/System/Sprites/TextSprite", ["apps/System/Matrix2D"], func
                     }
                     this.Text = text;
                 }
+                /**
+                 * The height of the text as returned by Graphics2D and cached locally
+                 * @property
+                 */
                 get Height() {
                     return this.textSize.Y;
                 }
+                /**
+                 * The width of the text as returned by Graphics2D and cached locally
+                 * @property
+                 */
                 get Width() {
                     return this.textSize.X;
                 }
+                /**
+                 * The string of text to render
+                 * @property
+                 */
                 get Text() {
                     return this.text;
                 }
-                // always use this because it sets the size
+                /**
+                 * Sets the text to be rendered.
+                 * It is important that ALL code that sets the text use this entyr point because it also
+                 * recalculates the text dimensions
+                 * @param t a string to render
+                 * @property
+                 */
                 set Text(t) {
                     this.text = t;
                     this.textSize = this.g2d.GetTextSize(this.text);
                 }
+                /**
+                 * This is called by the Graphics2D to render the sprite
+                 * @param g2d
+                 * @method
+                 */
                 Render(g2d) {
                     g2d.DrawText(this.Text, this.Transform);
                 }
+                /***
+                 * A null update because a SimpleImageSprite has no behavior other then rendering
+                 * @param msDelta
+                 * @method
+                 */
                 Update(msDelta) {
                 }
             };
