@@ -48,6 +48,11 @@ export default class Graphics2D
      */
     private drawspaceSize:Vector2;
 
+    /**
+     * This function is called back when G2D detects and responds to a window resize
+     */
+    public OnResize: (g2d:Graphics2D) => void;
+
 
     /**
      * Returns the size of the actual canvas as a Vector2 where X is the width and Y is the height
@@ -125,6 +130,8 @@ export default class Graphics2D
             self.ResetCanvasSize(window.innerWidth,window.innerHeight);
             self.screenSize = new Vector2(this.canvas.clientWidth,this.canvas.clientHeight);
             self.SetDrawspaceSize(self.Size); // reset world transform
+            this.ctx.font = 'bold 48px serif';
+            self.OnResize(self);
         });
 
 

@@ -622,6 +622,8 @@ System.register("apps/System/Graphics2D", ["apps/System/Rect", "apps/System/Matr
                         self.ResetCanvasSize(window.innerWidth, window.innerHeight);
                         self.screenSize = new Vector2_3.default(this.canvas.clientWidth, this.canvas.clientHeight);
                         self.SetDrawspaceSize(self.Size); // reset world transform
+                        this.ctx.font = 'bold 48px serif';
+                        self.OnResize(self);
                     });
                 }
                 /**
