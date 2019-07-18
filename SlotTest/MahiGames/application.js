@@ -1079,12 +1079,25 @@ System.register("apps/System/Sprites/ExponentialMapper", [], function (exports_1
     return {
         setters: [],
         execute: function () {
+            /**
+             * This class defines a mapping function that maps the input to an exponential curve, limited to 0 - 1  inclusive
+             * @class
+             */
             ExponentialMapper = class ExponentialMapper {
+                /**
+                 * Creates an exponential mapper with the given exponent
+                 * @param exponent the exponent of the map functions
+                 */
                 constructor(exponent) {
                     this.expo = 2;
                     this.expo = exponent;
                 }
-                //expects 0 .. 1 and returns 1 to the N
+                /**
+                 * Implements the arcsin based mapping function.
+                 * @param input a numebr to map,
+                 * @return the number passed in raised to the set exponent
+                 * @method
+                 */
                 Map(n) {
                     return Math.pow(n, this.expo);
                 }
@@ -1100,10 +1113,20 @@ System.register("apps/System/Sprites/ArcsinMapper", [], function (exports_13, co
     return {
         setters: [],
         execute: function () {
+            /**
+             * This class defines a mapping function that maps the input to an arcsin curve, limited to 0 - 1  inclusive
+             * @class
+             */
             ArcsinMapper = class ArcsinMapper {
                 constructor() {
                     this.boolean = false;
                 }
+                /**
+                 * Implements the arcsin based mapping function.
+                 * @param input a numebr to map, clipped to 0 to 1 inclusive
+                 * @return a 0-1 inclusive mappign result
+                 * @method
+                 */
                 Map(input) {
                     //asymptotes and limits
                     if (input >= 1) {
@@ -1174,7 +1197,16 @@ System.register("apps/System/Sprites/AutocenterTextSprite", ["apps/System/Sprite
             }
         ],
         execute: function () {
+            /***
+             * This is a simple extension of texSprite that draws the text with a centered origin
+             * @class
+             */
             AutocenterTextSprite = class AutocenterTextSprite extends TextSprite_1.default {
+                /**
+                 * Renders text centered on origin
+                 * @param g2d the Graphics2d to use for rendering
+                 * @method
+                 */
                 Render(g2d) {
                     g2d.DrawText(this.Text, this.Transform, true);
                 }
