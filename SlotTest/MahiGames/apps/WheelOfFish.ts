@@ -34,6 +34,9 @@ let assetNum:number=0;
 
 let drawList:Sprite[] = Array(6); // used to assemble in right draw order
 
+/**
+ * A list of strings to display in clockwise order
+ */
 let fishpuns:string[] = [
     "Aspirin is good for a haddock!",
     "You seem to be floundering",
@@ -45,7 +48,13 @@ let fishpuns:string[] = [
     "Well, Carp!"
 ]
 
-
+/**
+ * This is the function used to load all images
+ * @param path where to liad the image from
+ * @param success a callback for when the inage is loaded
+ * @param failure a callback if the load fails
+ * @method
+ */
 function LoadImage(path:string, success?:(asset:any)=>void,failure?:(asset:any)=>void):void{
     assetNum +=1; // incr wait count
     let image = new Image();
@@ -63,7 +72,10 @@ function LoadImage(path:string, success?:(asset:any)=>void,failure?:(asset:any)=
 }
 
 
-
+/**
+ * This callback method monitors loading and starst the game when all assets have bene loaded
+ * @method
+ */
 function AssetLoaded():void{
     loadCount +=1;
     if (loadCount==assetNum) { // all assets loaded
@@ -73,12 +85,19 @@ function AssetLoaded():void{
     }
 }
 
+/**
+ * A failure nethod to let us knwo if an image didnt load, for debugging
+ * @param img
+ * @constructor
+ */
 function ImageLoadFailed(img):void
 {
     console.log("Failed to load image at "+img.src);
 }
 
 // load all the sprites
+
+//text image doent have to be loaded as its generated on the fly
 textDisplay = new AutocenterTextSprite(g2d,"Wheel of Fish!");
 drawList[3] = textDisplay;
 
@@ -138,10 +157,13 @@ function StartGame():void{
     // start animation
     setInterval(()=> g2d.Redraw());
 
-    //this was for test in development, not needed now that we have a button
-    //Spin();
+
 }
 
+/**
+ * This function starts the wheel spinnign and sets up the timeotu for when it stops
+ * @constructor
+ */
 function Spin(){
 
     wheel.AcclToRadsPerSec(Math.PI*2,3000,new ArcsinMapper());
@@ -153,7 +175,10 @@ function Spin(){
     },10000)
 }
 
-
+/**
+ * This is called at the end to dtermine the selected fish
+ * @constructor
+ */
 function DoFish(){
     let angle = wheel.Transform.GetRotation()- (Math.PI/32); //a  fudge for imperfect art
     let index = Math.trunc(angle/(Math.PI*2/8));

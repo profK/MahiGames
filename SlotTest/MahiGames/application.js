@@ -1661,6 +1661,13 @@ System.register("apps/WheelOfFish", ["apps/System/Sprites/SimpleImageSprite", "a
     "use strict";
     var SimpleImageSprite_5, Matrix2D_5, Vector2_7, Graphics2D_2, AcceleratingSpinningSprite_1, ArcsinMapper_1, AutocenterTextSprite_1, g2d, screenSize, wheel, spin, arrow, textDisplay, loadCount, assetNum, drawList, fishpuns;
     var __moduleName = context_16 && context_16.id;
+    /**
+     * This is the function used to load all images
+     * @param path where to liad the image from
+     * @param success a callback for when the inage is loaded
+     * @param failure a callback if the load fails
+     * @method
+     */
     function LoadImage(path, success, failure) {
         assetNum += 1; // incr wait count
         let image = new Image();
@@ -1676,6 +1683,10 @@ System.register("apps/WheelOfFish", ["apps/System/Sprites/SimpleImageSprite", "a
         };
         image.src = path;
     }
+    /**
+     * This callback method monitors loading and starst the game when all assets have bene loaded
+     * @method
+     */
     function AssetLoaded() {
         loadCount += 1;
         if (loadCount == assetNum) { // all assets loaded
@@ -1684,6 +1695,11 @@ System.register("apps/WheelOfFish", ["apps/System/Sprites/SimpleImageSprite", "a
             StartGame();
         }
     }
+    /**
+     * A failure nethod to let us knwo if an image didnt load, for debugging
+     * @param img
+     * @constructor
+     */
     function ImageLoadFailed(img) {
         console.log("Failed to load image at " + img.src);
     }
@@ -1709,9 +1725,11 @@ System.register("apps/WheelOfFish", ["apps/System/Sprites/SimpleImageSprite", "a
         g2d.Redraw();
         // start animation
         setInterval(() => g2d.Redraw());
-        //this was for test in development, not needed now that we have a button
-        //Spin();
     }
+    /**
+     * This function starts the wheel spinnign and sets up the timeotu for when it stops
+     * @constructor
+     */
     function Spin() {
         wheel.AcclToRadsPerSec(Math.PI * 2, 3000, new ArcsinMapper_1.default());
         setTimeout(() => {
@@ -1721,6 +1739,10 @@ System.register("apps/WheelOfFish", ["apps/System/Sprites/SimpleImageSprite", "a
             setTimeout(DoFish, 3000);
         }, 10000);
     }
+    /**
+     * This is called at the end to dtermine the selected fish
+     * @constructor
+     */
     function DoFish() {
         let angle = wheel.Transform.GetRotation() - (Math.PI / 32); //a  fudge for imperfect art
         let index = Math.trunc(angle / (Math.PI * 2 / 8));
@@ -1760,6 +1782,9 @@ System.register("apps/WheelOfFish", ["apps/System/Sprites/SimpleImageSprite", "a
             loadCount = 0;
             assetNum = 0;
             drawList = Array(6); // used to assemble in right draw order
+            /**
+             * A list of strings to display in clockwise order
+             */
             fishpuns = [
                 "Aspirin is good for a haddock!",
                 "You seem to be floundering",
@@ -1771,6 +1796,7 @@ System.register("apps/WheelOfFish", ["apps/System/Sprites/SimpleImageSprite", "a
                 "Well, Carp!"
             ];
             // load all the sprites
+            //text image doent have to be loaded as its generated on the fly
             textDisplay = new AutocenterTextSprite_1.default(g2d, "Wheel of Fish!");
             drawList[3] = textDisplay;
             LoadImage("apps/assets/colored_wheel.png", (img) => {
