@@ -8,27 +8,35 @@ SlotTest/MahiGames/slot.html and SlotTest/MahiGames/Wheel.html
 The HTMl files are minimal shells, with all game code beign in the Typescript tree.
 The organiztion of that tree is as follows:
 
-apps -> SlotMachine.ts
-        WheelOfFish.ts
-        assets -> all game art and audio
-        System->  Graphics2D.ts (This is the primary engine interface)
-        Matrix2D.ts
-        Vector2.ts
-        Rect.ts
-        Sprite.ts (an interface implemented  by all drawables)
-        NumericalMapper.ts (an interface implemnted by animation controllign functions)
-	tests -> UnitTest1.ts (a test for the Matrix2D math)
-        Sprites-> SimpleImageSprite.ts
-                  ScrollingImageSprite.ts (used for the slot reels)
-                  SpinningSprite.ts (a super class used by AcceleratingSpinningSprite.ts)
-		  AcceleratingImageSprite.ts (used  by Wheel of Fish)
-                  TextSprite.ts  (an early and usable-with-issues text render sprite) 
-                  AutoCenterTextSprite (a sub-class of TextSprite that centers on its origin)
-                  ExponentialMapper.ts (an experimental animation timing controller)
-                  ArcsinMapper.ts (the animation controller used in Wheel of Fish)
+<ul> app
+	<li>SlotMachine.ts
+        <li>WheelOfFish.ts
+        <li>assets -> all game art and audio
+        <li>System <ul>
+		<li>Graphics2D.ts (This is the primary engine interface)
+        	<li>Matrix2D.ts
+        	<li>Vector2.ts
+        	<li>Rect.ts
+       	 	<li>Sprite.ts (an interface implemented  by all drawables)
+        	<li>NumericalMapper.ts (an interface implemnted by animation controllign functions)
+		<li>tests <ul>
+			<li>UnitTest1.ts (a test for the Matrix2D math)
+			</ul>	
+        	<li>Sprites <ul>
+			<li>SimpleImageSprite.ts
+                  	<li>ScrollingImageSprite.ts (used for the slot reels)
+                  	<li>SpinningSprite.ts (a super class used by AcceleratingSpinningSprite.ts)
+		  	<li>AcceleratingImageSprite.ts (used  by Wheel of Fish)
+                  	<li>TextSprite.ts  (an early and usable-with-issues text render sprite) 
+                  	<li>AutoCenterTextSprite (a sub-class of TextSprite that centers on its origin)
+                  	<li>ExponentialMapper.ts (an experimental animation timing controller)
+                  	<li>ArcsinMapper.ts (the animation controller used in Wheel of Fish)
+		</ul>
+	</ul>
+</ul>
+		
 
-
-All code gets built into application.js in Slotest/MahiGames
+<p>All code gets built into application.js in Slotest/MahiGames
 
 UML sequence and object hirearchy diagrams are in SlotTest/MahiGames/docs
 
