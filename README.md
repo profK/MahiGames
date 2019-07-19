@@ -40,9 +40,9 @@ The organiztion of that tree is as follows:
 
 UML sequence and object hirearchy diagrams are in SlotTest/MahiGames/docs
 
-There are some Visual Studio projects layign around the project but as I moved to WebStorm
+There are some Visual Studio project files laying around the project but as I moved to WebStorm
 part way through I can't gaurantee their correctness.  The code does build under Webstorm using 
-the butil-in TypeScript compiler.
+the built-in TypeScript compiler.
 
 SlotMachine:
 
@@ -50,7 +50,7 @@ Slot machine is a basic 4 reel slot.  Although the code is all browser-resident 
 by a quadruple of values that the reels will land on that could easily be provided from
 a server.  It is resizable and automatically adjusts for any reasonably sized screen.
 
-See the game and engine code for detaisl on how it works.
+See the game and engine code for details on how it works.
 
 Future work would include real art, more sounds, button animation and an exciting pay off animation.
 
@@ -64,7 +64,7 @@ It is built on the same underlying graphics engine as Slot Machine and also read
 
 See the game and engine details.
 
-Wheel of Fish does have an issue with extremely non-square screens as the wheel distorts some.  This points to future work on a sprite type that corrects for apect-ration mis-matches.
+Wheel of Fish does have an issue with extremely non-square screens as the wheel distorts some.  This points to future work on a sprite type that corrects for apect-ratio mis-matches.
 
 Other future work would be to add sound and betting/payoff.
 
