@@ -1,0 +1,34 @@
+﻿<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+    <meta charset="utf-8" />
+    <title>mahi test</title>
+    <script>var exports = {};</script>
+    <style>
+        html {
+            height: 100%;
+            min-height: 100%;
+        }
+        body {
+            min-height: 100%;
+        }
+        cavnas {
+            min-height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas" ></canvas>
+
+    <script>
+        console.log("foo!");
+    </script>
+    <script src="system-lite.js"></script> <!-- system-lite support -->
+    <script src="application.js"></script> <!-- system lite buulds the app into one js file. Not ideal but necessary-->
+    <!--  start scrpt -->
+    <script>
+        System.require("apps/SlotMachine");
+    </script>
+</body>
+</html>
