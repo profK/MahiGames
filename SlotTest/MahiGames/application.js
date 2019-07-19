@@ -1281,16 +1281,16 @@ System.register("apps/SlotMachine", ["apps/System/Sprites/SimpleImageSprite", "a
             LoadImage("apps/assets/reel_cropped.png", (img) => {
                 reel1 = new ScrollingImageSprite_1.default(img, 1, 5, true, new Vector2_5.default(0, 100));
                 drawList[1] = reel1;
-                reel1.Transform = new Matrix2D_3.default().Translate(new Vector2_5.default(464, 298));
+                reel1.Transform = new Matrix2D_3.default().Translate(new Vector2_5.default(475, 302));
                 reel2 = new ScrollingImageSprite_1.default(img, 1, 5, true, new Vector2_5.default(0, 100));
                 drawList[2] = reel2;
-                reel2.Transform = new Matrix2D_3.default().Translate(new Vector2_5.default(614, 298));
+                reel2.Transform = new Matrix2D_3.default().Translate(new Vector2_5.default(625, 302));
                 reel3 = new ScrollingImageSprite_1.default(img, 1, 5, true, new Vector2_5.default(0, 100));
                 drawList[3] = reel3;
-                reel3.Transform = new Matrix2D_3.default().Translate(new Vector2_5.default(764, 298));
+                reel3.Transform = new Matrix2D_3.default().Translate(new Vector2_5.default(775, 302));
                 reel4 = new ScrollingImageSprite_1.default(img, 1, 5, true, new Vector2_5.default(0, 100));
                 drawList[4] = reel4;
-                reel4.Transform = new Matrix2D_3.default().Translate(new Vector2_5.default(914, 298));
+                reel4.Transform = new Matrix2D_3.default().Translate(new Vector2_5.default(925, 302));
                 AssetLoaded();
             }, ImageLoadFailed);
             // This loads the spin button and sets up a callback on click

@@ -109,19 +109,19 @@ LoadImage("apps/assets/reel_cropped.png",(img)=> {
     reel1 = new ScrollingImageSprite(img, 1, 5, true,
         new Vector2(0, 100));
     drawList[1] = reel1;
-    reel1.Transform = new Matrix2D().Translate(new Vector2(464, 298));
+    reel1.Transform = new Matrix2D().Translate(new Vector2(475, 302));
     reel2 = new ScrollingImageSprite(img, 1, 5, true,
         new Vector2(0, 100));
     drawList[2] = reel2;
-    reel2.Transform = new Matrix2D().Translate(new Vector2(614, 298));
+    reel2.Transform = new Matrix2D().Translate(new Vector2(625, 302));
     reel3 = new ScrollingImageSprite(img, 1, 5, true,
         new Vector2(0, 100));
     drawList[3] = reel3;
-    reel3.Transform = new Matrix2D().Translate(new Vector2(764, 298));
+    reel3.Transform = new Matrix2D().Translate(new Vector2(775, 302));
     reel4 = new ScrollingImageSprite(img, 1, 5, true,
         new Vector2(0, 100));
     drawList[4] = reel4;
-    reel4.Transform = new Matrix2D().Translate(new Vector2(914, 298));
+    reel4.Transform = new Matrix2D().Translate(new Vector2(925, 302));
     AssetLoaded();
 },ImageLoadFailed);
 
