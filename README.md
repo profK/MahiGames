@@ -5,6 +5,9 @@ slot machine and a wheel of fortune type game.
 Both games are setup to be run locally by double clicking on 
 SlotTest/MahiGames/slot.html and SlotTest/MahiGames/Wheel.html
 
+You can also run them straight from the web at:
+https://profk.github.io/MahiGames
+
 The HTMl files are minimal shells, with all game code beign in the Typescript tree.
 The organiztion of that tree is as follows:
 
